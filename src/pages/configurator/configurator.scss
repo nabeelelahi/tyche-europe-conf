@@ -1,0 +1,285 @@
+.conf-header
+    height: 15vh !important;
+    background-color: #000 !important;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    img
+        height: 80%
+
+.left-container
+    width: 100%
+    height: 85vh
+    .left-top
+        border-bottom: 1px solid #dddddd
+        padding-bottom: 2vh
+
+    .left-icon-container
+        height: 100%
+        width: 100%
+        display: flex
+        flex-direction: column
+        justify-content: center
+        align-items: center
+        img
+            margin: 1vh 0px
+
+    .bracelet-container
+        width: 95%
+        height: 20vh
+        background-color: white
+        display: flex
+        justify-content: center
+        align-items: center
+        .bracelet
+            width: 100%
+            height: 30%
+
+    .leaf
+        width: 100%
+        height: auto
+
+    .categories-container
+        width: 100%
+        height: 17.5vh
+        display: flex
+        justify-content: center
+        align-items: center
+
+.categories-row
+    width: 52.5%
+    height: 100%
+
+.categories-card
+    height: 85%
+    width: 100%
+    background-color: white
+    margin: 7.5% 0
+    box-shadow: 1px 1px 2.5px 2.5px rgba(0, 0, 0, 0.05)
+    border-radius: 25px
+    display: flex
+    flex-direction: column
+    justify-content: space-around
+    padding: 10%
+    align-items: center
+    font-weight: 400
+    font-size: 17px
+    cursor: pointer
+    img
+        height: 50%
+        width: auto
+
+.right-text-box
+    height: 80%
+    padding: 0px 5%
+    width: 100%
+    display: flex
+    flex-direction: column
+    align-items: center
+    justify-content: center
+    text-align: center
+    transition: 0.2s linear
+    .selection-flow
+        max-height: 100%
+        overflow-y: auto
+
+    p
+        font-weight: 600
+        font-size: 13px
+
+    span
+        font-size: 12px
+
+.right-container
+    height: 85vh
+    display: flex
+    justify-content: center
+    align-items: center
+
+.right-card
+    height: 76vh
+    width: 90%
+    border-radius: 75px
+    flex-direction: column
+    box-shadow: 1px 1px 6px 5px rgba(0, 0, 0, 0.1)
+    .top-button-box
+        border-radius: 75px
+        .top-button-left
+            height: 8vh
+            font-size: 20px
+            font-weight: 600
+            border-top-left-radius: 75px
+            text-align: center
+            display: flex
+            padding: 0px 25%
+            justify-content: space-evenly
+            align-items: center
+            .top-button-collapse
+                transition: 0.2s ease
+
+        .top-button-right
+            height: 8vh
+            font-size: 17px
+            border-top-right-radius: 75px
+            text-align: center
+            display: flex
+            flex-direction: column
+            justify-content: center
+            cursor: pointer
+            p
+                font-size: 23px
+                margin-top: 2vh
+                letter-spacing: 0.5px
+                font-weight: 400
+
+.beats-container
+    padding: 0px 3vw 0px 5vw
+    margin: 3vh 0
+    max-height: 45vh
+    overflow-x: hidden
+    overflow-y: auto
+
+.beats-cards
+    width: 100%
+    img
+        height: auto
+        width: 100%
+
+.item-details
+    height: 85%
+    width: 100%
+    display: flex
+    flex-direction: column
+    align-items: center
+    transition: 2s linear
+    img
+        height: auto
+        width: 60%
+
+    h3
+        font-weight: 600
+        font-size: 1.5rem
+
+    h4
+        font-weight: 700
+        font-size: 1rem
+
+.item-top
+    display: flex
+    justify-content: flex-end
+    z-index: 99
+    width: 100%
+    img
+        width: 50%
+        margin: 0px 14.75%
+
+.add-to-cart-container
+    height: 67.5%
+    padding: 5%
+    width: 100%
+    display: flex
+    flex-direction: column
+    align-items: center
+    transition: 0.2s linear
+    .add-to-cart-text-box
+        max-height: 45%
+        margin: 0px 0px 3vh 0px
+        width: 80%
+        display: flex
+        flex-direction: column
+        align-items: center
+        justify-content: space-around
+
+    .over-flow-comps
+        overflow-y: auto
+        position: relative
+        top: 2.5%
+
+    .add-to-cart-text-row
+        width: 70%
+        display: flex
+        align-items: center
+        justify-content: space-between
+        cursor: pointer
+        div
+            display: flex
+            align-items: center
+            img
+                width: 2.5vw
+
+        p
+            color: #a8a6a6
+            margin: 1vh
+
+        .btns
+            height: 100%
+            width: 40px
+            background-color: #fff
+            color: #000
+            font-size: 20px
+            border-radius: 2px
+            border: 1px solid #000
+            display: flex
+            justify-content: center
+           
+
+            .size
+                width: 50%
+                height: 100%
+                border: 1px solid #000
+                background-color: #fafafa
+                display: flex
+                justify-content: center
+                align-items: center
+                color: #000
+
+    hr
+        border: 0.5px solid #707070
+        width: 100%
+
+    .add-to-cart-colors-box
+        min-height: 10vh
+        p
+            color: #707070
+            font-weight: 500
+
+        div
+            display: flex
+            justify-content: space-between
+
+.image-text-row
+    width: 90%
+    display: flex
+    align-items: center
+    justify-content: space-between
+    div
+        display: flex
+        align-items: center
+        img
+            width: 2.5vw
+
+    p
+        color: #a8a6a6
+        margin: 1vh
+
+.bottom-buttons
+    background-color: black
+    height: 12%
+    width: 100
+    border-radius: 0px 0px 75px 75px
+    display: flex
+    justify-content: space-evenly
+    align-items: center
+    p
+        font-size: 17px
+        margin-top: 2vh
+        letter-spacing: 0.5px
+        font-weight: 400
+        color: white
+
+    h4
+        font-size: 23px
+        margin-top: 2vh
+        letter-spacing: 0.5px
+        font-weight: 600
+        color: white
