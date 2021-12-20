@@ -8,6 +8,10 @@
     "build": "NEXT_TELEMETRY_DISABLED=1 next build",
     "start": "cross-env NODE_ENV=production node ./server/index.js"
   },
+  "engines": {
+    "node": "14.17.1",
+    "npm": "2.5.x"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/Shopify/shopify-app-node.git"
