@@ -25,7 +25,7 @@ import {
     DraggableComp,
     LoaderComp
 } from '../../components'
-import { categories } from '../../config'
+import { categories, dummyNugs } from '../../config'
 import { http } from '../../services'
 import './configurator.css'
 
@@ -197,10 +197,10 @@ export default function Configurator() {
                 <img alt="" src={Logo} />
             </Header>
             <Row>
-                <Col lg={17}>
+                <Col lg={17} md={16} sm={24} xs={24}>
                     <div className="left-container">
                         <Row>
-                            <Col lg={1}>
+                            <Col lg={1} xs={1}>
                                 <div className="left-icon-container">
                                     <img alt="" src={Heart} />
                                     <ZoomInOutlined
@@ -211,35 +211,15 @@ export default function Configurator() {
                                     <img alt="" src={Color} />
                                 </div>
                             </Col>
-                            <Col className="left-top" lg={23}>
+                            <Col className="left-top" lg={{ offset: 1, span: 22 }} xs={{ offset: 3, span: 20 }}>
                                 <div className="bracelet-container">
-                                    <Row
-                                        gutter={[0, 0]}
-                                        className="bracelet"
-                                    >
+                                    <div className="bracelet">
                                         {
                                             bracelet &&
                                             <>
                                                 {
-                                                    bracelet?.map((item, index) => {
-                                                        let offset;
-
-                                                        if (index === 0) {
-                                                            offset = bracelet.length === 15 || bracelet.length === 16 ? 4
-                                                                : bracelet.length === 17 || bracelet.length === 18 ? 3
-                                                                    : bracelet.length === 19 || bracelet.length === 20 ? 2
-                                                                        : bracelet.length === 21 || bracelet.length === 22 ? 1
-                                                                            : 0
-                                                        }
-
-                                                        return (
-                                                            <Col
-                                                                lg={{
-                                                                    offset,
-                                                                    span: 1
-                                                                }}
-                                                                key={index}
-                                                            >
+                                                    bracelet?.map((item, index) => (
+                                                            <div className='bracelet-leaf-body'>
                                                                 <DroppableComp
                                                                     droppableId={`${index}`}
                                                                 >
@@ -254,19 +234,18 @@ export default function Configurator() {
                                                                         }
                                                                     </DraggableComp>
                                                                 </DroppableComp>
-                                                            </Col>
-                                                        )
-                                                    })
+                                                            </div>
+                                                        ))
                                                 }
                                             </>
                                         }
-                                    </Row>
+                                    </div>
                                 </div>
                                 <div className="categories-container">
                                     <Row gutter={[16, 16]} className="categories-row">
                                         {
                                             categories.map((item, index) => (
-                                                <Col key={item.title} lg={6}>
+                                                <Col key={item.title} lg={6} xs={6}>
                                                     <div
                                                         onClick={() => onCategorieChange(item, index)}
                                                         style={{ border: categoryIndex === index && '2px solid #dddddd' }}
@@ -284,7 +263,7 @@ export default function Configurator() {
                         </Row>
                         <DroppableComp droppableId="beats">
                             <Row className="beats-container">
-                                {
+                            {
                                     leaves ?
                                         <>
                                             {
@@ -292,7 +271,7 @@ export default function Configurator() {
                                                     if (categoryState && categoryState === item.category) {
                                                         if (item.category === categoryState) {
                                                             return (
-                                                                <Col key={item.title} lg={3}>
+                                                                <Col key={item.title} span={3}>
                                                                     <DraggableComp
                                                                         draggableId={item.title}
                                                                         index={index}
@@ -335,7 +314,7 @@ export default function Configurator() {
                         </DroppableComp>
                     </div>
                 </Col>
-                <Col lg={7}>
+                <Col lg={{ offset: 0, span: 7}} md={{ offset: 0, span: 8}} sm={{ offset: 5, span: 14 }} xs={{ offset: 0, span: 24}}>
                     <div className="right-container">
                         <div className="right-card">
                             <div
@@ -345,23 +324,23 @@ export default function Configurator() {
                                 <Row>
                                     {
                                         isAddToCart ?
-                                            <Col lg={24}>
+                                            <Col span={24}>
                                                 <div className="top-button-right">
                                                     <p> YOUR SELECTION </p>
                                                 </div>
                                             </Col>
                                             :
                                             <>
-                                                <Col lg={12}>
+                                                <Col span={12}>
                                                     <div style={{ backgroundColor: '#000', color: '#fff' }} className="top-button-left">
                                                         ${braceletPrice}
                                                     </div>
                                                 </Col>
                                                 <Col
                                                     onClick={() => setIsAddToCart(true)}
-                                                    lg={12}
+                                                    span={12}
                                                 >
-                                                    <div className="top-button-right">
+                                                    <div className="top-button-right top-button-right-small">
                                                         Add to Cart
                                                     </div>
                                                 </Col>

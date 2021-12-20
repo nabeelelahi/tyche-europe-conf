@@ -24,33 +24,24 @@ export default function BraceletModal({ bracelet, visible, setVisible }) {
             style={{ height: '100vh', width: '100vw' }}
         >
             <div className="modal-container">
-                <Row
-                    gutter={[0, 0]}
-                    className="modal-bracelet"
-                >
+                <div className="modal-bracelet">
                     {
                         bracelet &&
                         <>
                             {
                                 bracelet?.map((item, index) => (
-                                    <Col
-                                        lg={{
-                                            offset: bracelet.length === 15 && index === 0 ? 4 : bracelet.length === 17 && index === 0 ? 4 : bracelet.length === 19 && index === 0 ? 3 : bracelet.length === 21 && index === 0 ? 2 : bracelet.length === 23 && index === 0 ? 1 : 0,
-                                            span: 1
-                                        }}
-                                        key={index}
-                                    >
-                                    {
-                                        item ?
-                                        <img className='leaf' src={item?.img} alt='' /> :
-                                        <img className='leaf' src={Leaf} alt='' />
-                                    }
-                                    </Col>
+                                    <div className='bracelet-leaf-body'>
+                                                {
+                                                    item ?
+                                                        <img className='leaf' src={item?.img} alt='' /> :
+                                                        <img className='leaf' src={Leaf} alt='' />
+                                                }
+                                    </div>
                                 ))
                             }
                         </>
                     }
-                </Row>
+                </div>
             </div>
         </Modal>
     )
