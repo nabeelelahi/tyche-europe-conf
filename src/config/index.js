@@ -1,13 +1,11 @@
 import { 
-    categories, 
-    dummyNugs , 
+    categories,  
     sizes,
     color
 } from './dummyData'
 
 export {
     categories,
-    dummyNugs,
     sizes,
     color
 }
