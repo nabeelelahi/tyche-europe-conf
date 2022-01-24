@@ -4,13 +4,14 @@ import {
     Routes,
     Route
   } from 'react-router-dom';
-import { Configurator } from '../pages';
+import { Configurator, LandingPage } from '../pages';
 
 export default function App(props) {
 
     return (
         <Routes>
-            <Route path="/" element={<Configurator client={props} />} />
+            <Route path="/configurator" element={<Configurator client={props} />} />
+            <Route path="/" element={<LandingPage client={props} />} />
         </Routes>
     )
 }
