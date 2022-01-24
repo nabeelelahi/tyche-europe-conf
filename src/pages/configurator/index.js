@@ -303,20 +303,20 @@ export default function Configurator() {
 
     let isAddtoCartExist = false;
 
-    client.checkout.fetch(checkoutId).then((checkout) => {
-      console.log(checkout.lineItems)
-      checkout.lineItems.forEach(async item => {
-        console.log(item)
-        if (item.variant.id == single.variants[0].id) {
-          const lineItemsToUpdate = [
-            item.id
-          ];
+    // client.checkout.fetch(checkoutId).then((checkout) => {
+    //   console.log(checkout.lineItems)
+    //   checkout.lineItems.forEach(async item => {
+    //     console.log(item)
+    //     if (item.variant.id == single.variants[0].id) {
+    //       const lineItemsToUpdate = [
+    //         item.id
+    //       ];
 
-          await client.checkout.removeLineItems(checkoutId, lineItemsToUpdate)
+    //       await client.checkout.removeLineItems(checkoutId, lineItemsToUpdate)
 
-        }
-      })
-    })
+    //     }
+    //   })
+    // })
 
     let x = [];
     bracelet.forEach((item, index) => {
@@ -328,7 +328,8 @@ export default function Configurator() {
     addVariantToCart(single.variants[0].id, x.length)
       .then(() => {
         client.checkout.fetch(checkoutId).then((checkout) => {
-          checkout.lineItems && window.open(webURL)
+          // checkout.lineItems && window.open(webURL)
+          if(checkout.lineItems) window.location.href = webURL;
         })
       })
 
