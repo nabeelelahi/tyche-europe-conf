@@ -35,15 +35,11 @@ export default function Configurator() {
 
   const [leaves, setLeaves] = useState([]);
 
-  const [categoryState, setCategoryState] = useState("symbol");
-
   const [item, setItem] = useState(null);
 
   const [categoryIndex, setCategoryIndex] = useState(0);
 
   const [size, setSize] = useState(16);
-
-  const [linkPrize, setLinkPrize] = useState(0);
 
   const [isAddToCart, setIsAddToCart] = useState(false);
 
@@ -71,8 +67,6 @@ export default function Configurator() {
   ]);
 
   const [visible, setVisible] = useState(false);
-
-  const [collection, setCollections] = useState(null);
 
   const [single, setSingle] = useState(null);
 
@@ -152,6 +146,10 @@ export default function Configurator() {
 
   }, [])
 
+  useEffect(() => {
+    selectionAndPrize()
+  }, [bracelet])
+
   async function dragEnd(res) {
     setItem(null);
     const { source, destination } = res;
@@ -161,34 +159,40 @@ export default function Configurator() {
 
       let tempArray = bracelet;
 
-      if (tempArray[destination.index]) { 
+      if (tempArray[destination.index]) {
 
         await removeVarientFromCart(tempArray[destination.index].variantId)
-        .then(() => {
+          .then(() => {
 
-          tempArray[destination.index] = leaves[source.index];
+            tempArray[destination.index] = leaves[source.index];
 
-          addVariantToCart(leaves[source.index].variantId, 1)
-  
-          setBracelet(null);
-  
-          setTimeout(() => setBracelet(tempArray), 0.5);
-  
-          selectionAndPrize();
+            addVariantToCart(leaves[source.index].variantId, 1)
+              .then(() => {
+                setBracelet(null);
 
-        })
+                setTimeout(() => {
+                  setBracelet(tempArray)
+                  selectionAndPrize();
+                }, 0.5);
+              })
+
+          })
 
       }
       else {
         tempArray[destination.index] = leaves[source.index];
 
         addVariantToCart(leaves[source.index].variantId, 1)
+          .then(() => {
+            setBracelet(null);
 
-        setBracelet(null);
+            setTimeout(() => {
+              setBracelet(tempArray)
+              selectionAndPrize();
+            }, 0.5);
+          })
 
-        setTimeout(() => setBracelet(tempArray), 0.5);
 
-        selectionAndPrize();
       }
     } else if (
       Number(source.droppableId) >= 0 &&
@@ -210,9 +214,12 @@ export default function Configurator() {
 
             setBracelet(null);
 
-            setTimeout(() => setBracelet(tempArray), 0.5);
+            setTimeout(() => {
+              setBracelet(tempArray)
+              selectionAndPrize()
+            }
+              , 0.5);
 
-            selectionAndPrize();
 
           })
 
@@ -226,31 +233,48 @@ export default function Configurator() {
 
             setBracelet(null);
 
-            setTimeout(() => setBracelet(tempArray), 0.5);
+            setTimeout(() => {
+              setBracelet(tempArray)
+              selectionAndPrize();
+            }, 0.5);
 
-            selectionAndPrize();
           })
 
       }
     }
   }
 
-  function selectionAndPrize() {
+  async function selectionAndPrize() {
     let cartArray = [];
     let emptyArray = [];
 
-    let total = linkPrize;
+    let total = 0;
 
-    bracelet.forEach((item) => {
-      if (item?.price) {
-        cartArray.push(item);
-      }
+    bracelet?.forEach((item) => {
+      if (item?.price) return
       else {
         emptyArray.push(null);
       }
     });
 
-    console.log(emptyArray, 'nulling')
+    await client.checkout.fetch(checkoutId).then((checkout) => {
+
+      if (checkout.lineItems?.length) {
+        checkout.lineItems.forEach((item, index) => {
+          const obj = {
+            id: item.id,
+            title: item.title,
+            img: item.variant.image.src,
+            variantId: item.variant.id,
+            price: item.variant.price,
+          }
+          cartArray.push(obj)
+        })
+        setSelections([])
+        setTimeout(() => setSelections(cartArray), 50)
+      }
+
+    })
 
     cartArray.map((item, index) => {
       total += Number(item.price);
@@ -273,9 +297,11 @@ export default function Configurator() {
     if (op === "add" && tempArray) {
       tempArray.length = size + 1;
       tempArray[tempArray?.length - 1] = null;
+      setBraceletPrice(prev => prev + 10)
     } else if (op === "sub" && tempArray) {
       tempArray.length = size - 1;
       tempArray[tempArray?.length - 1] = null;
+      setBraceletPrice(prev => prev - 10)
     }
 
     setBracelet(null);
@@ -298,7 +324,6 @@ export default function Configurator() {
 
   function onCategorieChange(item, index) {
     setCategoryIndex(index);
-    setCategoryState(item.state);
   }
 
   function clearSelection() {
