@@ -31,3 +31,25 @@
   .landing-card img{
     border-radius: 50px;
   }
+
+  @media only screen and (max-width: 600px) {
+    .landing-card{
+      height: 55vh;
+      width: 95%;
+      border-radius: 50px;
+    }
+    .react-3d-carousel .slider-container .slider-content {
+      position: relative;
+       left: 0% !important;
+       transform: translateX(-35%) !important;
+    }
+    .react-3d-carousel .slider-container .slider-content .slider-single .slider-single-content{
+      width: 100vw !important;
+      margin-left: 0px !important;
+      margin-right: 0px !important;
+    }
+    body{
+      overflow-x: hidden;
+    }
+  }
+  

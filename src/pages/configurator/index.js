@@ -181,25 +181,36 @@ export default function Configurator() {
       ) {
         let tempArray = bracelet;
 
-        tempArray[destination.index] = tempArray[source.index];
+        await removeVarientFromCart(tempArray[destination.index].variantId)
+        .then(() => {
+          
+          tempArray[destination.index] = tempArray[source.index];
 
-        tempArray[source.index] = null;
+          tempArray[source.index] = null;
+  
+          setBracelet(null);
+  
+          setTimeout(() => setBracelet(tempArray), 0.5);
+  
+          selectionAndPrize();
 
-        setBracelet(null);
+        })
 
-        setTimeout(() => setBracelet(tempArray), 0.5);
-
-        selectionAndPrize();
       } else {
         let tempArray = bracelet;
 
-        tempArray[source.index] = null;
+        await removeVarientFromCart(tempArray[source.index].variantId)
+        .then(() => {
 
-        setBracelet(null);
+          tempArray[source.index] = null;
 
-        setTimeout(() => setBracelet(tempArray), 0.5);
+          setBracelet(null);
 
-        selectionAndPrize();
+          setTimeout(() => setBracelet(tempArray), 0.5);
+
+          selectionAndPrize();
+        })
+
       }
     }
   }
@@ -301,23 +312,6 @@ export default function Configurator() {
 
   async function proceedToCheckout() {
 
-    let isAddtoCartExist = false;
-
-    // client.checkout.fetch(checkoutId).then((checkout) => {
-    //   console.log(checkout.lineItems)
-    //   checkout.lineItems.forEach(async item => {
-    //     console.log(item)
-    //     if (item.variant.id == single.variants[0].id) {
-    //       const lineItemsToUpdate = [
-    //         item.id
-    //       ];
-
-    //       await client.checkout.removeLineItems(checkoutId, lineItemsToUpdate)
-
-    //     }
-    //   })
-    // })
-
     let x = [];
     bracelet.forEach((item, index) => {
       if (!item) {
@@ -329,12 +323,31 @@ export default function Configurator() {
       .then(() => {
         client.checkout.fetch(checkoutId).then((checkout) => {
           // checkout.lineItems && window.open(webURL)
-          if(checkout.lineItems) window.location.href = webURL;
+          if (checkout.lineItems) window.location.href = webURL;
         })
       })
 
   }
 
+
+  async function removeVarientFromCart(variantId){
+   
+    client.checkout.fetch(checkoutId).then((checkout) => {
+
+      checkout.lineItems.forEach(async item => {
+
+        if (item.variant.id, variantId) {
+
+          const lineItemsToUpdate = [
+            item.id
+          ];
+
+          await client.checkout.removeLineItems(checkoutId, lineItemsToUpdate)
+
+        }
+      })
+    })
+  }
 
 
   return (
