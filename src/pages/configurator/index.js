@@ -161,15 +161,35 @@ export default function Configurator() {
 
       let tempArray = bracelet;
 
-      tempArray[destination.index] = leaves[source.index];
+      if (tempArray[destination.index]) { 
 
-      addVariantToCart(leaves[source.index].variantId, 1)
+        await removeVarientFromCart(tempArray[destination.index].variantId)
+        .then(() => {
 
-      setBracelet(null);
+          tempArray[destination.index] = leaves[source.index];
 
-      setTimeout(() => setBracelet(tempArray), 0.5);
+          addVariantToCart(leaves[source.index].variantId, 1)
+  
+          setBracelet(null);
+  
+          setTimeout(() => setBracelet(tempArray), 0.5);
+  
+          selectionAndPrize();
 
-      selectionAndPrize();
+        })
+
+      }
+      else {
+        tempArray[destination.index] = leaves[source.index];
+
+        addVariantToCart(leaves[source.index].variantId, 1)
+
+        setBracelet(null);
+
+        setTimeout(() => setBracelet(tempArray), 0.5);
+
+        selectionAndPrize();
+      }
     } else if (
       Number(source.droppableId) >= 0 &&
       Number(source.droppableId) < 23
@@ -182,34 +202,34 @@ export default function Configurator() {
         let tempArray = bracelet;
 
         await removeVarientFromCart(tempArray[destination.index].variantId)
-        .then(() => {
-          
-          tempArray[destination.index] = tempArray[source.index];
+          .then(() => {
 
-          tempArray[source.index] = null;
-  
-          setBracelet(null);
-  
-          setTimeout(() => setBracelet(tempArray), 0.5);
-  
-          selectionAndPrize();
+            tempArray[destination.index] = tempArray[source.index];
 
-        })
+            tempArray[source.index] = null;
+
+            setBracelet(null);
+
+            setTimeout(() => setBracelet(tempArray), 0.5);
+
+            selectionAndPrize();
+
+          })
 
       } else {
         let tempArray = bracelet;
 
         await removeVarientFromCart(tempArray[source.index].variantId)
-        .then(() => {
+          .then(() => {
 
-          tempArray[source.index] = null;
+            tempArray[source.index] = null;
 
-          setBracelet(null);
+            setBracelet(null);
 
-          setTimeout(() => setBracelet(tempArray), 0.5);
+            setTimeout(() => setBracelet(tempArray), 0.5);
 
-          selectionAndPrize();
-        })
+            selectionAndPrize();
+          })
 
       }
     }
@@ -330,8 +350,8 @@ export default function Configurator() {
   }
 
 
-  async function removeVarientFromCart(variantId){
-   
+  async function removeVarientFromCart(variantId) {
+
     client.checkout.fetch(checkoutId).then((checkout) => {
 
       checkout.lineItems.forEach(async item => {
