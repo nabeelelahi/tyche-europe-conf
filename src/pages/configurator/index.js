@@ -35,15 +35,11 @@ export default function Configurator() {
 
   const [leaves, setLeaves] = useState([]);
 
-  const [categoryState, setCategoryState] = useState("symbol");
-
   const [item, setItem] = useState(null);
 
   const [categoryIndex, setCategoryIndex] = useState(0);
 
   const [size, setSize] = useState(16);
-
-  const [linkPrize, setLinkPrize] = useState(0);
 
   const [isAddToCart, setIsAddToCart] = useState(false);
 
@@ -71,8 +67,6 @@ export default function Configurator() {
   ]);
 
   const [visible, setVisible] = useState(false);
-
-  const [collection, setCollections] = useState(null);
 
   const [single, setSingle] = useState(null);
 
@@ -152,6 +146,10 @@ export default function Configurator() {
 
   }, [])
 
+  useEffect(() => {
+    selectionAndPrize()
+  }, [bracelet])
+
   async function dragEnd(res) {
     setItem(null);
     const { source, destination } = res;
@@ -161,15 +159,41 @@ export default function Configurator() {
 
       let tempArray = bracelet;
 
-      tempArray[destination.index] = leaves[source.index];
+      if (tempArray[destination.index]) {
 
-      addVariantToCart(leaves[source.index].variantId, 1)
+        await removeVarientFromCart(tempArray[destination.index].variantId)
+          .then(() => {
 
-      setBracelet(null);
+            tempArray[destination.index] = leaves[source.index];
 
-      setTimeout(() => setBracelet(tempArray), 0.5);
+            addVariantToCart(leaves[source.index].variantId, 1)
+              .then(() => {
+                setBracelet(null);
 
-      selectionAndPrize();
+                setTimeout(() => {
+                  setBracelet(tempArray)
+                  selectionAndPrize();
+                }, 0.5);
+              })
+
+          })
+
+      }
+      else {
+        tempArray[destination.index] = leaves[source.index];
+
+        addVariantToCart(leaves[source.index].variantId, 1)
+          .then(() => {
+            setBracelet(null);
+
+            setTimeout(() => {
+              setBracelet(tempArray)
+              selectionAndPrize();
+            }, 0.5);
+          })
+
+
+      }
     } else if (
       Number(source.droppableId) >= 0 &&
       Number(source.droppableId) < 23
@@ -181,45 +205,76 @@ export default function Configurator() {
       ) {
         let tempArray = bracelet;
 
-        tempArray[destination.index] = tempArray[source.index];
+        await removeVarientFromCart(tempArray[destination.index].variantId)
+          .then(() => {
 
-        tempArray[source.index] = null;
+            tempArray[destination.index] = tempArray[source.index];
 
-        setBracelet(null);
+            tempArray[source.index] = null;
 
-        setTimeout(() => setBracelet(tempArray), 0.5);
+            setBracelet(null);
 
-        selectionAndPrize();
+            setTimeout(() => {
+              setBracelet(tempArray)
+              selectionAndPrize()
+            }
+              , 0.5);
+
+
+          })
+
       } else {
         let tempArray = bracelet;
 
-        tempArray[source.index] = null;
+        await removeVarientFromCart(tempArray[source.index].variantId)
+          .then(() => {
 
-        setBracelet(null);
+            tempArray[source.index] = null;
 
-        setTimeout(() => setBracelet(tempArray), 0.5);
+            setBracelet(null);
 
-        selectionAndPrize();
+            setTimeout(() => {
+              setBracelet(tempArray)
+              selectionAndPrize();
+            }, 0.5);
+
+          })
+
       }
     }
   }
 
-  function selectionAndPrize() {
+  async function selectionAndPrize() {
     let cartArray = [];
     let emptyArray = [];
 
-    let total = linkPrize;
+    let total = 0;
 
-    bracelet.forEach((item) => {
-      if (item?.price) {
-        cartArray.push(item);
-      }
+    bracelet?.forEach((item) => {
+      if (item?.price) return
       else {
         emptyArray.push(null);
       }
     });
 
-    console.log(emptyArray, 'nulling')
+    await client.checkout.fetch(checkoutId).then((checkout) => {
+
+      if (checkout.lineItems?.length) {
+        checkout.lineItems.forEach((item, index) => {
+          const obj = {
+            id: item.id,
+            title: item.title,
+            img: item.variant.image.src,
+            variantId: item.variant.id,
+            price: item.variant.price,
+          }
+          cartArray.push(obj)
+        })
+        setSelections([])
+        setTimeout(() => setSelections(cartArray), 50)
+      }
+
+    })
 
     cartArray.map((item, index) => {
       total += Number(item.price);
@@ -242,9 +297,11 @@ export default function Configurator() {
     if (op === "add" && tempArray) {
       tempArray.length = size + 1;
       tempArray[tempArray?.length - 1] = null;
+      setBraceletPrice(prev => prev + 10)
     } else if (op === "sub" && tempArray) {
       tempArray.length = size - 1;
       tempArray[tempArray?.length - 1] = null;
+      setBraceletPrice(prev => prev - 10)
     }
 
     setBracelet(null);
@@ -267,7 +324,6 @@ export default function Configurator() {
 
   function onCategorieChange(item, index) {
     setCategoryIndex(index);
-    setCategoryState(item.state);
   }
 
   function clearSelection() {
@@ -301,23 +357,6 @@ export default function Configurator() {
 
   async function proceedToCheckout() {
 
-    let isAddtoCartExist = false;
-
-    client.checkout.fetch(checkoutId).then((checkout) => {
-      console.log(checkout.lineItems)
-      checkout.lineItems.forEach(async item => {
-        console.log(item)
-        if (item.variant.id == single.variants[0].id) {
-          const lineItemsToUpdate = [
-            item.id
-          ];
-
-          await client.checkout.removeLineItems(checkoutId, lineItemsToUpdate)
-
-        }
-      })
-    })
-
     let x = [];
     bracelet.forEach((item, index) => {
       if (!item) {
@@ -328,12 +367,32 @@ export default function Configurator() {
     addVariantToCart(single.variants[0].id, x.length)
       .then(() => {
         client.checkout.fetch(checkoutId).then((checkout) => {
-          checkout.lineItems && window.open(webURL)
+          // checkout.lineItems && window.open(webURL)
+          if (checkout.lineItems) window.location.href = webURL;
         })
       })
 
   }
 
+
+  async function removeVarientFromCart(variantId) {
+
+    client.checkout.fetch(checkoutId).then((checkout) => {
+
+      checkout.lineItems.forEach(async item => {
+
+        if (item.variant.id, variantId) {
+
+          const lineItemsToUpdate = [
+            item.id
+          ];
+
+          await client.checkout.removeLineItems(checkoutId, lineItemsToUpdate)
+
+        }
+      })
+    })
+  }
 
 
   return (

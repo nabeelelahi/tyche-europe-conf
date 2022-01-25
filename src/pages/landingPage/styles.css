@@ -1,0 +1,55 @@
+.landing-body{
+    background-image: url("https://cdn.shopify.com/s/files/1/0509/4978/3709/files/Rectangle_40.png?v=1624696722") !important;
+    filter: grayscale(100%);
+    width: 100%;
+    height: 85vh;
+    background-size: cover;
+  }
+
+ .layer{
+     height: 100%;
+     width: 100%;
+        background-color: rgba(255, 255, 255, 0.1);
+        padding: 7.5vh;
+ } 
+  .landing-card{
+    height: 70vh;
+    width: 70vh;
+    border-radius: 100px;
+    background-color: white;
+    box-shadow: 5px 10px 5px 0px rgba(0,0,0,0.25);
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    align-items: center;
+    padding-top: 5.5%;
+    font-size: 22.5px;
+    font-weight: 300;
+    cursor: pointer;
+  }
+  
+  .landing-card img{
+    border-radius: 50px;
+  }
+
+  @media only screen and (max-width: 600px) {
+    .landing-card{
+      height: 55vh;
+      width: 95%;
+      border-radius: 50px;
+    }
+    .react-3d-carousel .slider-container .slider-content {
+      position: relative;
+       left: 0% !important;
+       transform: translateX(-35%) !important;
+    }
+    .react-3d-carousel .slider-container .slider-content .slider-single .slider-single-content{
+      width: 100vw !important;
+      margin-left: 0px !important;
+      margin-right: 0px !important;
+    }
+    body{
+      overflow-x: hidden;
+    }
+  }
+  
