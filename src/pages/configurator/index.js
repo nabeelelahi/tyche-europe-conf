@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { DragDropContext } from "react-beautiful-dnd";
-import { Row, Col, Layout } from "antd";
+import { Row, Col } from "antd";
 import {
   CloseOutlined,
   DownOutlined,
@@ -8,19 +8,17 @@ import {
   ZoomInOutlined,
   DeleteOutlined,
 } from "@ant-design/icons";
-import { Logo, Links } from "../../assets";
+import { Links } from "../../assets";
 import {
   BraceletModal,
   DroppableComp,
   DraggableComp,
   LoaderComp,
+  Nav
 } from "../../components";
 import { categories } from "../../config";
-import { http } from "../../services";
 import Client from 'shopify-buy';
 import './configurator.css'
-
-const { Header } = Layout;
 
 export default function Configurator() {
 
@@ -111,8 +109,11 @@ export default function Configurator() {
 
   useEffect(() => {
     client.collection.fetchAllWithProducts().then((collections) => {
+
       client.collection.fetchWithProducts(collections[categoryIndex].id, { productsFirst: 50 }).then((collection) => {
         const tempArray = [];
+
+        console.log(collection.products[0])
 
         collection.products.forEach((item, index) => {
           const obj = {
@@ -128,29 +129,23 @@ export default function Configurator() {
         setTimeout(() => setLeaves(tempArray), 50)
         setLeaves(tempArray);
       });
+
     });
   }, [categoryIndex])
 
   useEffect(() => {
-
-    client.checkout.create().then((checkout) => {
-      setCheckoutId(checkout.id);
-      setWebURL(checkout.webUrl)
-    });
-
-    const handle = 'einzelnes-leaf';
-
-    client.product.fetchByHandle(handle).then((product) => {
-      setSingle(product);
-    });
-
+    createCheckOut()
   }, [])
 
   useEffect(() => {
     selectionAndPrize()
   }, [bracelet])
 
-  async function dragEnd(res) {
+  useEffect(() => {
+    getSingleProduct()
+  }, [checkoutId])
+
+   function dragEnd(res) {
     setItem(null);
     const { source, destination } = res;
 
@@ -161,20 +156,16 @@ export default function Configurator() {
 
       if (tempArray[destination.index]) {
 
-        await removeVarientFromCart(tempArray[destination.index].variantId)
+        removeVarientFromCart(tempArray[destination.index].variantId, tempArray[destination.index].id)
+
+        tempArray[destination.index] = leaves[source.index];
+
+        addVariantToCart(leaves[source.index].variantId, 1)
           .then(() => {
+            setBracelet(null);
 
-            tempArray[destination.index] = leaves[source.index];
-
-            addVariantToCart(leaves[source.index].variantId, 1)
-              .then(() => {
-                setBracelet(null);
-
-                setTimeout(() => {
-                  setBracelet(tempArray)
-                  selectionAndPrize();
-                }, 0.5);
-              })
+            setBracelet(tempArray)
+            selectionAndPrize();
 
           })
 
@@ -185,11 +176,8 @@ export default function Configurator() {
         addVariantToCart(leaves[source.index].variantId, 1)
           .then(() => {
             setBracelet(null);
-
-            setTimeout(() => {
-              setBracelet(tempArray)
-              selectionAndPrize();
-            }, 0.5);
+            setBracelet(tempArray)
+            selectionAndPrize();
           })
 
 
@@ -205,59 +193,54 @@ export default function Configurator() {
       ) {
         let tempArray = bracelet;
 
-        await removeVarientFromCart(tempArray[destination.index].variantId)
-          .then(() => {
+        removeVarientFromCart(tempArray[destination.index].variantId, tempArray[destination.index].id)
 
-            tempArray[destination.index] = tempArray[source.index];
+        tempArray[destination.index] = tempArray[source.index];
 
-            tempArray[source.index] = null;
+        tempArray[source.index] = null;
 
-            setBracelet(null);
+        setBracelet(null);
 
-            setTimeout(() => {
-              setBracelet(tempArray)
-              selectionAndPrize()
-            }
-              , 0.5);
+        setBracelet(tempArray)
+        selectionAndPrize()
 
-
-          })
 
       } else {
         let tempArray = bracelet;
 
-        await removeVarientFromCart(tempArray[source.index].variantId)
-          .then(() => {
+        removeVarientFromCart(tempArray[source.index].variantId, tempArray[source.index].id)
 
-            tempArray[source.index] = null;
 
-            setBracelet(null);
+        tempArray[source.index] = null;
 
-            setTimeout(() => {
-              setBracelet(tempArray)
-              selectionAndPrize();
-            }, 0.5);
+        setBracelet(null);
 
-          })
+        setBracelet(tempArray)
+        selectionAndPrize();
+
+
 
       }
     }
   }
 
-  async function selectionAndPrize() {
+  function selectionAndPrize() {
     let cartArray = [];
     let emptyArray = [];
+    let arrayForPrizing = [];
 
     let total = 0;
 
     bracelet?.forEach((item) => {
-      if (item?.price) return
+      if (item?.price) {
+        arrayForPrizing.push(item)
+      }
       else {
         emptyArray.push(null);
       }
     });
 
-    await client.checkout.fetch(checkoutId).then((checkout) => {
+    client.checkout.fetch(checkoutId).then((checkout) => {
 
       if (checkout.lineItems?.length) {
         checkout.lineItems.forEach((item, index) => {
@@ -276,7 +259,7 @@ export default function Configurator() {
 
     })
 
-    cartArray.map((item, index) => {
+    arrayForPrizing.map((item, index) => {
       total += Number(item.price);
     });
 
@@ -288,7 +271,7 @@ export default function Configurator() {
 
     setSelections([]);
 
-    setTimeout(() => setSelections(cartArray), 50);
+    setSelections(cartArray);
   }
 
   function onSizeChange(op) {
@@ -329,18 +312,18 @@ export default function Configurator() {
   function clearSelection() {
     let tempArray = [];
 
+    createCheckOut()
+
+    setBraceletPrice(bracelet.length * 10);
+
     bracelet.forEach((item) => {
       tempArray.push(null);
-    });
+    })
 
-    setBraceletPrice(0);
+    setBracelet(tempArray);
 
-    setSelections([]);
+    setTimeout(() => setSelections([]), 1000)
 
-    setTimeout(() => {
-      setSelections([]);
-      setBracelet(tempArray);
-    }, 50);
   }
 
   async function addVariantToCart(variantId, quantity) {
@@ -375,31 +358,79 @@ export default function Configurator() {
   }
 
 
-  async function removeVarientFromCart(variantId) {
+  function removeVarientFromCart(variantId, id) {
 
     client.checkout.fetch(checkoutId).then((checkout) => {
 
-      checkout.lineItems.forEach(async item => {
+      checkout.lineItems.forEach(item => {
 
-        if (item.variant.id, variantId) {
+        if (item.variant.id == variantId) {
 
-          const lineItemsToUpdate = [
-            item.id
-          ];
 
-          await client.checkout.removeLineItems(checkoutId, lineItemsToUpdate)
+          if (item.quantity === 1) {
+
+            const lineItemsToUpdate = [item.id]
+
+            console.log(lineItemsToUpdate)
+
+            client.checkout.removeLineItems(checkoutId, lineItemsToUpdate)
+              .then(() => {
+                selectionAndPrize()
+              })
+          }
 
         }
+        else {
+
+          const quantity = item.quantity - 1;
+
+          const lineItemsToUpdate = [
+            { id: item.id, quantity: quantity }
+          ];
+
+          client.checkout.updateLineItems(checkoutId, lineItemsToUpdate)
+            .then(() => {
+              selectionAndPrize()
+            })
+
+        }
+
       })
+
     })
+  }
+
+  function createCheckOut() {
+
+    client.checkout.create().then((checkout) => {
+
+      console.log(checkout)
+
+      setCheckoutId(checkout.id);
+
+      setWebURL(checkout.webUrl)
+
+    });
+
+  }
+
+  function getSingleProduct() {
+
+    const handle = 'einzelnes-leaf';
+
+    client.product.fetchByHandle(handle).then((product) => {
+      setSingle(product);
+    });
+
   }
 
 
   return (
     <DragDropContext onDragEnd={dragEnd}>
-      <Header className="conf-header">
+      <Nav />
+      {/* <Header className="conf-header">
         <img alt="" src={Logo} />
-      </Header>
+      </Header> */}
       <Row className="conf-row">
         <Col lg={17} md={16} sm={24} xs={24}>
           <div className="left-container">
@@ -597,9 +628,9 @@ export default function Configurator() {
                   <div className="add-to-cart-container">
                     <div className="add-to-cart-text-box">
                       <div className="add-to-cart-text-row">
-                        <p className="size">
-                          {size} Leaves <span> {` (${size + 2} cm)`}</span>
-                        </p>
+                        <div className="size">
+                          {size} Leaves <p> {` (${size + 2} cm)`}</p>
+                        </div>
                         <button
                           disabled={size > 16 ? false : true}
                           style={{ opacity: size > 16 ? "1" : "0.2" }}
@@ -638,8 +669,8 @@ export default function Configurator() {
                     className="bottom-buttons"
                     onClick={proceedToCheckout}
                   >
-                    <p>Add to cart</p>
                     <h4> €{braceletPrice}</h4>
+                    <p>Add to cart</p>
                   </div>
                 </>
               ) : (

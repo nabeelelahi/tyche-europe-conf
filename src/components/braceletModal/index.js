@@ -1,14 +1,7 @@
 import React from "react";
-import { Modal } from "antd";
-import { Leaf } from "../../assets";
 import { CloseOutlined } from "@ant-design/icons";
 
 export default function BraceletModal({ bracelet, visible, setVisible }) {
-  console.log(setVisible);
-
-  function handleCancel() {
-    setVisible(false);
-  }
 
   if (visible) {
     return (
