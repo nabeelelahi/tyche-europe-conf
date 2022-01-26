@@ -31,6 +31,11 @@
     width: 60%;
   }
 
+  .react-3d-carousel .slider-container .slider-content .slider-single.preactive .slider-single-content,
+    .react-3d-carousel .slider-container .slider-content .slider-single.proactive .slider-single-content {
+      opacity: 0.7;
+  }
+
   @media only screen and (max-width: 600px) {
     .landing-card{
       height: 55vh;
@@ -38,15 +43,23 @@
       border-radius: 50px;
     }
     .react-3d-carousel .slider-container .slider-content {
-      position: relative;
+       position: relative;
        left: 0% !important;
-       transform: translateX(-35%) !important;
+       transform: translateX(-50%) !important;
     }
     .react-3d-carousel .slider-container .slider-content .slider-single .slider-single-content{
       width: 100vw !important;
       margin-left: 0px !important;
       margin-right: 0px !important;
     }
+    .react-3d-carousel .slider-container .slider-content .slider-single.preactive .slider-single-content,
+    .react-3d-carousel .slider-container .slider-content .slider-single.proactive .slider-single-content {
+      transform: translateX(0%) scale(0.8);
+  }
+  .react-3d-carousel .slider-container .slider-left div,
+  .react-3d-carousel .slider-container .slider-right div {
+    display: none !important;
+  }
     body{
       overflow-x: hidden;
     }
