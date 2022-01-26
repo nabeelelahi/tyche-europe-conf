@@ -27,7 +27,7 @@ export default function Configurator() {
     domain: 'tyche-jewelry-official.myshopify.com'
   });
 
-  const [braceletPrice, setBraceletPrice] = useState(160);
+  const [braceletPrice, setBraceletPrice] = useState(140);
 
   const [selections, setSelections] = useState([]);
 
@@ -37,7 +37,7 @@ export default function Configurator() {
 
   const [categoryIndex, setCategoryIndex] = useState(0);
 
-  const [size, setSize] = useState(16);
+  const [size, setSize] = useState(14);
 
   const [isAddToCart, setIsAddToCart] = useState(false);
 
@@ -45,9 +45,9 @@ export default function Configurator() {
 
   const [webURL, setWebURL] = useState(null);
 
+  const [isLoading, setIsLoading] = useState(false);
+
   const [bracelet, setBracelet] = useState([
-    null,
-    null,
     null,
     null,
     null,
@@ -145,7 +145,8 @@ export default function Configurator() {
     getSingleProduct()
   }, [checkoutId])
 
-   function dragEnd(res) {
+  function dragEnd(res) {
+    setIsLoading(true)
     setItem(null);
     const { source, destination } = res;
 
@@ -272,6 +273,7 @@ export default function Configurator() {
     setSelections([]);
 
     setSelections(cartArray);
+    setIsLoading(false)
   }
 
   function onSizeChange(op) {
@@ -362,8 +364,10 @@ export default function Configurator() {
 
     client.checkout.fetch(checkoutId).then((checkout) => {
 
+
       checkout.lineItems.forEach(item => {
 
+        console.log(item.variant.id)
         if (item.variant.id == variantId) {
 
 
@@ -435,8 +439,8 @@ export default function Configurator() {
         <Col lg={17} md={16} sm={24} xs={24}>
           <div className="left-container">
             <Row>
-              <Col lg={1} xs={24}>
-                <div className="left-icon-container">
+              <Col lg={1} xs={2}>
+                <div className="left-icon-container h-100 py-3">
                   {/* <img alt="" src={Heart} /> */}
                   <ZoomInOutlined
                     style={{ fontSize: "30px", color: "#949494" }}
@@ -450,9 +454,8 @@ export default function Configurator() {
                 </div>
               </Col>
               <Col
-                className="left-top"
                 lg={{ offset: 1, span: 22 }}
-                xs={{ offset: 0, span: 24 }}
+                xs={{ offset: 1, span: 21 }}
               >
                 <div className="bracelet-container">
                   <div className="bracelet">
@@ -486,6 +489,11 @@ export default function Configurator() {
                     )}
                   </div>
                 </div>
+              </Col>
+              <Col
+                className="left-top"
+                span={24}
+              >
                 <div className="categories-container">
                   <Row gutter={[16, 16]} className="categories-row">
                     {categories.map((item, index) => (
@@ -623,102 +631,111 @@ export default function Configurator() {
                   )}
                 </div>
               </div>
-              {isAddToCart ? (
-                <>
-                  <div className="add-to-cart-container">
-                    <div className="add-to-cart-text-box">
-                      <div className="add-to-cart-text-row">
-                        <div className="size">
-                          {size} Leaves <p> {` (${size + 2} cm)`}</p>
-                        </div>
-                        <button
-                          disabled={size > 16 ? false : true}
-                          style={{ opacity: size > 16 ? "1" : "0.2" }}
-                          className="btns"
-                          onClick={() => addSub("sub")}
-                        >
-                          -
-                        </button>
-                        <button
-                          disabled={size < 19 ? false : true}
-                          style={{ opacity: size < 19 ? "1" : "0.2" }}
-                          className="btns"
-                          onClick={() => addSub("add")}
-                        >
-                          +
-                        </button>
-                      </div>
-                    </div>
-                    <hr />
-                    <div
-                      className="add-to-cart-scroll-area"
-                      style={{ paddingTop: addToCartMargin }}
-                    >
-                      {selections.map((item) => (
-                        <div key={item.title} className="image-text-row">
-                          <div>
-                            <img src={item.img} alt="" />
-                            <p>{item.title}</p>
+              {
+                isLoading && !selections?.length ?
+                  <LoaderComp />
+                  :
+                  <>
+                    {isAddToCart ? (
+                      <>
+                        <div className="add-to-cart-container">
+                          <div className="add-to-cart-text-box">
+                            <div className="add-to-cart-text-row">
+                              <div className="size">
+                                {size} Leaves
+                              </div>
+                              <button
+                                disabled={size > 14 ? false : true}
+                                style={{ opacity: size > 14 ? "1" : "0.2" }}
+                                className="btns"
+                                onClick={() => addSub("sub")}
+                              >
+                                -
+                              </button>
+                              <button
+                                disabled={size < 19 ? false : true}
+                                style={{ opacity: size < 19 ? "1" : "0.2" }}
+                                className="btns"
+                                onClick={() => addSub("add")}
+                              >
+                                +
+                              </button>
+                            </div>
+                            <p className="bracelet-length"> Bracelet length: {`${size + 2} cm`}</p>
                           </div>
-                          <p>€ {item.price}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div
-                    className="bottom-buttons"
-                    onClick={proceedToCheckout}
-                  >
-                    <h4> €{braceletPrice}</h4>
-                    <p>Add to cart</p>
-                  </div>
-                </>
-              ) : (
-                <div className="right-text-box">
-                  {item ? (
-                    <div className="item-details">
-                      <div className="item-top">
-                        <CloseOutlined
-                          style={{ fontSize: "25px", color: "#b5b3b3" }}
-                          onClick={() => setItem(null)}
-                        />
-                      </div>
-                      <h3>{item.title}</h3>
-                      <img src={item.img} alt="" />
-                      <h4>Price: € {item.price}</h4>
-                    </div>
-                  ) : (
-                    <>
-                      <h2>YOUR SELECTION</h2>
-                      {selections.length ? (
-                        <div className="selection-flow">
-                          <Row gutter={[16, 16]}>
+                          <hr />
+                          <div
+                            className="add-to-cart-scroll-area"
+                            style={{ paddingTop: addToCartMargin }}
+                          >
                             {selections.map((item) => (
-                              <Col span={12}>
-                                <div className="selection-beats">
+                              <div key={item.title} className="image-text-row">
+                                <div>
                                   <img src={item.img} alt="" />
+                                  <p>{item.title}</p>
                                 </div>
-                              </Col>
+                                <p>€ {item.price}</p>
+                              </div>
                             ))}
-                          </Row>
+                          </div>
                         </div>
-                      ) : (
-                        <>
-                          <p>You haven't selected any</p>
-                          <p>
-                            Click on the arrow above to cange the length of you
-                            bracelet.
-                          </p>
-                          <span>
-                            Every time you will add a Link to your bracelet, it
-                            will automatically be saved here in Your Selection.{" "}
-                          </span>
-                        </>
-                      )}
-                    </>
-                  )}
-                </div>
-              )}
+                        <div
+                          className="bottom-buttons"
+                          onClick={proceedToCheckout}
+                        >
+                          <p>€{braceletPrice}</p>
+                          <p className="fw-bold">Add to cart</p>
+                        </div>
+                      </>
+                    ) : (
+                      <div className="right-text-box">
+                        {item ? (
+                          <div className="item-details">
+                            <div className="item-top">
+                              <CloseOutlined
+                                style={{ fontSize: "25px", color: "#b5b3b3" }}
+                                onClick={() => setItem(null)}
+                              />
+                            </div>
+                            <h3>{item.title}</h3>
+                            <img src={item.img} alt="" />
+                            <h4>Price: € {item.price}</h4>
+                          </div>
+                        ) :
+                          (
+                            <>
+                              <h2>YOUR SELECTION</h2>
+                              {selections.length ? (
+                                <div className="selection-flow">
+                                  <Row gutter={[16, 16]}>
+                                    {selections.map((item) => (
+                                      <Col span={12}>
+                                        <div className="selection-beats">
+                                          <img src={item.img} alt="" />
+                                        </div>
+                                      </Col>
+                                    ))}
+                                  </Row>
+                                </div>
+                              ) : (
+                                <>
+                                  <p>You haven't selected any</p>
+                                  <p>
+                                    Click on the arrow above to cange the length of you
+                                    bracelet.
+                                  </p>
+                                  <span>
+                                    Every time you will add a Link to your bracelet, it
+                                    will automatically be saved here in Your Selection.{" "}
+                                  </span>
+                                </>
+                              )}
+                            </>
+                          )}
+                      </div>
+                    )}
+                  </>
+              }
             </div>
           </div>
         </Col>
