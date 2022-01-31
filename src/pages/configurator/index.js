@@ -718,9 +718,14 @@ export default function Configurator() {
                         ) :
                           (
                             <>
-                              <h4 className="mb-5">
-                                The base product price contains <b className="text-primary">{size}</b> leaves
-                              </h4>
+                              {
+                                !selections?.length ?
+                                  <h4 className="mb-5">
+                                    The base product price contains <b className="text-primary">{size}</b> leaves
+                                  </h4>
+                                  :
+                                  <></>
+                              }
                               <h2>YOUR SELECTION</h2>
                               {selections.length ? (
                                 <div className="selection-flow">
