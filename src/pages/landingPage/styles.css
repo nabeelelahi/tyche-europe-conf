@@ -3,13 +3,20 @@
     width: 100%;
     height: 90vh;
     background-size: cover;
+    overflow: hidden;
+  }
+
+  body{
+    overflow-x: hidden;
+    overflow-y: hidden;
   }
 
  .layer{
      height: 100%;
      width: 100%;
-        background-color: rgba(255, 255, 255, 0.1);
+        background-color: rgba(0, 0, 0, 0.4);
         padding: 7.5vh;
+        overflow: hidden;
  } 
   .landing-card{
     height: 70vh;
@@ -37,6 +44,9 @@
   }
 
   @media only screen and (max-width: 600px) {
+    .landing-body{
+      background-image: url('https://www.nomination.com/media/configurator/composition_style_bkg_mobile.jpg') !important;
+    }
     .landing-card{
       height: 55vh;
       width: 95%;
@@ -45,7 +55,7 @@
     .react-3d-carousel .slider-container .slider-content {
        position: relative;
        left: 0% !important;
-       transform: translateX(-50%) !important;
+       /* transform: translateX(-48.75%) !important; */
     }
     .react-3d-carousel .slider-container .slider-content .slider-single .slider-single-content{
       width: 100vw !important;

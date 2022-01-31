@@ -14,20 +14,23 @@ import {
   DroppableComp,
   DraggableComp,
   LoaderComp,
-  Nav
+  Nav,
+  Overlay
 } from "../../components";
 import { categories } from "../../config";
 import Client from 'shopify-buy';
 import './configurator.css'
 
+const client = Client.buildClient({
+  storefrontAccessToken: 'b115721510b772788c02a084c1ecf5ea',
+  domain: 'tyche-jewelry-official.myshopify.com'
+})
+
+
 export default function Configurator() {
 
-  const client = Client.buildClient({
-    storefrontAccessToken: 'b115721510b772788c02a084c1ecf5ea',
-    domain: 'tyche-jewelry-official.myshopify.com'
-  });
 
-  const [braceletPrice, setBraceletPrice] = useState(140);
+  const [braceletPrice, setBraceletPrice] = useState(160);
 
   const [selections, setSelections] = useState([]);
 
@@ -37,11 +40,13 @@ export default function Configurator() {
 
   const [categoryIndex, setCategoryIndex] = useState(0);
 
-  const [size, setSize] = useState(14);
+  const [size, setSize] = useState(16);
 
   const [isAddToCart, setIsAddToCart] = useState(false);
 
   const [checkoutId, setCheckoutId] = useState(null);
+
+  const [checkout, setCheckout] = useState(null);
 
   const [webURL, setWebURL] = useState(null);
 
@@ -62,9 +67,13 @@ export default function Configurator() {
     null,
     null,
     null,
+    null,
+    null,
   ]);
 
   const [visible, setVisible] = useState(false);
+
+  const [overlay, setOverlay] = useState(false);
 
   const [single, setSingle] = useState(null);
 
@@ -105,45 +114,20 @@ export default function Configurator() {
 
   useEffect(() => {
     selectionAndPrize();
-  }, []);
+    createCheckOut();
+  }, [client]);
 
   useEffect(() => {
-    client.collection.fetchAllWithProducts().then((collections) => {
-
-      client.collection.fetchWithProducts(collections[categoryIndex].id, { productsFirst: 50 }).then((collection) => {
-        const tempArray = [];
-
-        console.log(collection.products[0])
-
-        collection.products.forEach((item, index) => {
-          const obj = {
-            id: item.id,
-            title: item.title,
-            img: item.images[2].src,
-            variantId: item.variants[0].id,
-            price: item.variants[0].price,
-            category: collections[categoryIndex].title
-          }
-          tempArray.push(obj)
-        })
-        setTimeout(() => setLeaves(tempArray), 50)
-        setLeaves(tempArray);
-      });
-
-    });
-  }, [categoryIndex])
-
-  useEffect(() => {
-    createCheckOut()
-  }, [])
+    getProducts()
+  }, [categoryIndex, client])
 
   useEffect(() => {
     selectionAndPrize()
-  }, [bracelet])
+  }, [bracelet, client, checkout])
 
   useEffect(() => {
     getSingleProduct()
-  }, [checkoutId])
+  }, [checkoutId, client])
 
   function dragEnd(res) {
     setIsLoading(true)
@@ -157,18 +141,20 @@ export default function Configurator() {
 
       if (tempArray[destination.index]) {
 
-        removeVarientFromCart(tempArray[destination.index].variantId, tempArray[destination.index].id)
+        removeLineItemInCart(tempArray[destination.index])
+          .then(async () => {
 
-        tempArray[destination.index] = leaves[source.index];
+            tempArray[destination.index] = leaves[source.index]
 
-        addVariantToCart(leaves[source.index].variantId, 1)
-          .then(() => {
+            await addVariantToCart(leaves[source.index].variantId, 1)
+
             setBracelet(null);
 
             setBracelet(tempArray)
-            selectionAndPrize();
 
           })
+
+
 
       }
       else {
@@ -178,51 +164,69 @@ export default function Configurator() {
           .then(() => {
             setBracelet(null);
             setBracelet(tempArray)
-            selectionAndPrize();
+            // selectionAndPrize();
+          })
+      }
+
+    }
+    else if (Number(source.droppableId) >= 0 && Number(source.droppableId) < 23) {
+
+      if (!destination) return;
+
+      if (Number(destination.droppableId) >= 0 && Number(destination.droppableId) < 23) {
+        let tempArray = bracelet;
+
+        if (tempArray[destination.index]) {
+
+          removeLineItemInCart(tempArray[destination.index])
+            .then(() => {
+
+              tempArray[destination.index] = tempArray[source.index];
+
+              tempArray[source.index] = null;
+
+              setBracelet(null);
+
+              setBracelet(tempArray)
+
+            })
+
+        }
+        else {
+
+          tempArray[destination.index] = tempArray[source.index];
+
+          tempArray[source.index] = null;
+
+          console.log(tempArray)
+
+          setBracelet(null);
+
+          setTimeout(() => setBracelet(tempArray), 50)
+
+        }
+
+      }
+      else {
+        let tempArray = bracelet;
+
+        removeLineItemInCart(tempArray[source.index])
+          .then(() => {
+
+            // tempArray[destination.index] = tempArray[source.index];
+
+            tempArray[source.index] = null;
+
+            setBracelet(null);
+
+            setBracelet(tempArray)
+
           })
 
 
       }
-    } else if (
-      Number(source.droppableId) >= 0 &&
-      Number(source.droppableId) < 23
-    ) {
-      if (!destination) return;
-      if (
-        Number(destination.droppableId) >= 0 &&
-        Number(destination.droppableId) < 23
-      ) {
-        let tempArray = bracelet;
-
-        removeVarientFromCart(tempArray[destination.index].variantId, tempArray[destination.index].id)
-
-        tempArray[destination.index] = tempArray[source.index];
-
-        tempArray[source.index] = null;
-
-        setBracelet(null);
-
-        setBracelet(tempArray)
-        selectionAndPrize()
-
-
-      } else {
-        let tempArray = bracelet;
-
-        removeVarientFromCart(tempArray[source.index].variantId, tempArray[source.index].id)
-
-
-        tempArray[source.index] = null;
-
-        setBracelet(null);
-
-        setBracelet(tempArray)
-        selectionAndPrize();
-
-
-
-      }
     }
+    setIsLoading(false)
   }
 
   function selectionAndPrize() {
@@ -241,27 +245,28 @@ export default function Configurator() {
       }
     });
 
-    client.checkout.fetch(checkoutId).then((checkout) => {
 
-      if (checkout.lineItems?.length) {
-        checkout.lineItems.forEach((item, index) => {
-          const obj = {
-            id: item.id,
-            title: item.title,
-            img: item.variant.image.src,
-            variantId: item.variant.id,
-            price: item.variant.price,
-          }
-          cartArray.push(obj)
-        })
-        setSelections([])
-        setTimeout(() => setSelections(cartArray), 50)
+
+    checkout?.lineItems?.forEach((item, index) => {
+      const obj = {
+        id: item.id,
+        title: item.title,
+        img: item.variant.image.src,
+        variantId: item.variant.id,
+        price: item.variant.price,
+        quantity: item.quantity
       }
-
+      cartArray.push(obj)
     })
 
-    arrayForPrizing.map((item, index) => {
-      total += Number(item.price);
+    setSelections([])
+
+    setTimeout(() => {
+      setSelections(cartArray)
+    }, 50)
+
+    cartArray.map((item, index) => {
+      total += Number(item.price) * item.quantity;
     });
 
     emptyArray.map((arr, ind) => {
@@ -285,7 +290,6 @@ export default function Configurator() {
       setBraceletPrice(prev => prev + 10)
     } else if (op === "sub" && tempArray) {
       tempArray.length = size - 1;
-      tempArray[tempArray?.length - 1] = null;
       setBraceletPrice(prev => prev - 10)
     }
 
@@ -335,6 +339,8 @@ export default function Configurator() {
 
       const res = await client.checkout.addLineItems(checkoutId, lineItemsToAdd)
 
+      setCheckout(res)
+
       return res
     }
 
@@ -359,56 +365,42 @@ export default function Configurator() {
 
   }
 
+  async function removeLineItemInCart(lineItem) {
 
-  function removeVarientFromCart(variantId, id) {
+    let removingLeave;
 
-    client.checkout.fetch(checkoutId).then((checkout) => {
-
-
-      checkout.lineItems.forEach(item => {
-
-        console.log(item.variant.id)
-        if (item.variant.id == variantId) {
-
-
-          if (item.quantity === 1) {
-
-            const lineItemsToUpdate = [item.id]
-
-            console.log(lineItemsToUpdate)
-
-            client.checkout.removeLineItems(checkoutId, lineItemsToUpdate)
-              .then(() => {
-                selectionAndPrize()
-              })
-          }
-
-        }
-        else {
-
-          const quantity = item.quantity - 1;
-
-          const lineItemsToUpdate = [
-            { id: item.id, quantity: quantity }
-          ];
-
-          client.checkout.updateLineItems(checkoutId, lineItemsToUpdate)
-            .then(() => {
-              selectionAndPrize()
-            })
-
-        }
-
-      })
-
+    selections.forEach(selection => {
+      if (!selection) return
+      if (selection?.variantId === lineItem?.variantId) removingLeave = selection
     })
+
+    if (removingLeave.quantity > 1) {
+
+      console.log('update huwa')
+
+      const lineItemsToUpdate = [{ id: removingLeave.id, quantity: parseInt(removingLeave.quantity - 1, 10) }]
+
+      const res = await client.checkout.updateLineItems(checkoutId, lineItemsToUpdate)
+
+      setCheckout(res)
+
+    }
+    else {
+
+      const res = await client.checkout.removeLineItems(checkoutId, [removingLeave.id])
+      console.log(res, 'remove huwa')
+      setCheckout(res)
+
+    }
+
+
   }
 
   function createCheckOut() {
 
     client.checkout.create().then((checkout) => {
 
-      console.log(checkout)
+      setCheckout(checkout)
 
       setCheckoutId(checkout.id);
 
@@ -428,13 +420,35 @@ export default function Configurator() {
 
   }
 
+  function getProducts() {
+
+    client.collection.fetchAllWithProducts().then((collections) => {
+      client.collection.fetchWithProducts(collections[categoryIndex].id, { productsFirst: 50 }).then((collection) => {
+        const tempArray = [];
+
+        collection.products.forEach((item, index) => {
+          const obj = {
+            id: item.id,
+            title: item.title,
+            img: item.images[2].src,
+            variantId: item.variants[0].id,
+            price: item.variants[0].price,
+            category: collections[categoryIndex].title
+          }
+          tempArray.push(obj)
+        })
+        setTimeout(() => setLeaves(tempArray), 50)
+        setLeaves(tempArray);
+      });
+
+    });
+
+  }
+
 
   return (
     <DragDropContext onDragEnd={dragEnd}>
       <Nav />
-      {/* <Header className="conf-header">
-        <img alt="" src={Logo} />
-      </Header> */}
       <Row className="conf-row">
         <Col lg={17} md={16} sm={24} xs={24}>
           <div className="left-container">
@@ -507,7 +521,7 @@ export default function Configurator() {
                           className="categories-card"
                         >
                           <img alt="" src={item.img} />
-                          {item.title}
+                          {item.name}
                         </div>
                       </Col>
                     ))}
@@ -645,8 +659,8 @@ export default function Configurator() {
                                 {size} Leaves
                               </div>
                               <button
-                                disabled={size > 14 ? false : true}
-                                style={{ opacity: size > 14 ? "1" : "0.2" }}
+                                disabled={size > 16 ? false : true}
+                                style={{ opacity: size > 16 ? "1" : "0.2" }}
                                 className="btns"
                                 onClick={() => addSub("sub")}
                               >
@@ -704,6 +718,9 @@ export default function Configurator() {
                         ) :
                           (
                             <>
+                              <h4 className="mb-5">
+                                The base product price contains <b className="text-primary">{size}</b> leaves
+                              </h4>
                               <h2>YOUR SELECTION</h2>
                               {selections.length ? (
                                 <div className="selection-flow">
@@ -726,8 +743,13 @@ export default function Configurator() {
                                   </p>
                                   <span>
                                     Every time you will add a Link to your bracelet, it
-                                    will automatically be saved here in Your Selection.{" "}
+                                    will automatically be saved here in Your Selection.
                                   </span>
+                                  <a
+                                    href="#"
+                                    className="text-dark mt-3"
+                                    onClick={() => setOverlay(true)}
+                                  ><u>Help with sizing?</u></a>
                                 </>
                               )}
                             </>
@@ -744,6 +766,10 @@ export default function Configurator() {
         visible={visible}
         setVisible={setVisible}
         bracelet={bracelet}
+      />
+      <Overlay
+        visible={overlay}
+        setVisible={setOverlay}
       />
     </DragDropContext>
   );

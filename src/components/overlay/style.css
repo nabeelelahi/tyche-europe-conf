@@ -1,0 +1,18 @@
+.overlay-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-color: hsla(0, 0%, 0%, 0.85);
+    height: 100% !important; 
+    width: 100vw !important;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    align-items: center;
+    z-index: 90;
+    overflow: hidden;
+  }
+.overlay-container{
+   height: 60vh;
+   width: auto;
+}
