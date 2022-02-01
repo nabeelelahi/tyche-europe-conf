@@ -21,9 +21,11 @@ export default function Nav() {
                         </li>
                     </ul>
                 </div>
-                <a href="https://tyche-europe.com" target='_blank' className="logo">
+                <div className="logo">
+                <a href="https://tyche-europe.com" target='_blank' >
                     <img alt="" src={Logo} />
                 </a>
+                </div>
             </div>
         </nav>
     );

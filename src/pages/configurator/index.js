@@ -29,9 +29,6 @@ const client = Client.buildClient({
 
 export default function Configurator() {
 
-
-  const [braceletPrice, setBraceletPrice] = useState(160);
-
   const [selections, setSelections] = useState([]);
 
   const [leaves, setLeaves] = useState([]);
@@ -70,6 +67,8 @@ export default function Configurator() {
     null,
     null,
   ]);
+
+  const [braceletPrice, setBraceletPrice] = useState(bracelet?.length * 10);
 
   const [visible, setVisible] = useState(false);
 
@@ -433,7 +432,8 @@ export default function Configurator() {
             img: item.images[2].src,
             variantId: item.variants[0].id,
             price: item.variants[0].price,
-            category: collections[categoryIndex].title
+            category: collections[categoryIndex].title,
+            url: item.onlineStoreUrl
           }
           tempArray.push(obj)
         })
@@ -509,9 +509,9 @@ export default function Configurator() {
                 span={24}
               >
                 <div className="categories-container">
-                  <Row gutter={[16, 16]} className="categories-row">
+                  <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} className="categories-row">
                     {categories.map((item, index) => (
-                      <Col key={item.title} lg={6} xs={12}>
+                      <Col key={item.title} span={6}>
                         <div
                           onClick={() => onCategorieChange(item, index)}
                           style={{
@@ -659,8 +659,8 @@ export default function Configurator() {
                                 {size} Leaves
                               </div>
                               <button
-                                disabled={size > 16 ? false : true}
-                                style={{ opacity: size > 16 ? "1" : "0.2" }}
+                                disabled={size > 14 ? false : true}
+                                style={{ opacity: size > 14 ? "1" : "0.2" }}
                                 className="btns"
                                 onClick={() => addSub("sub")}
                               >
@@ -688,7 +688,7 @@ export default function Configurator() {
                                   <img src={item.img} alt="" />
                                   <p>{item.title}</p>
                                 </div>
-                                <p>€ {item.price}</p>
+                                <p>€ {item.price} x <span className="text-primary fw-bold">{item.quantity}</span> </p>
                               </div>
                             ))}
                           </div>
@@ -714,6 +714,7 @@ export default function Configurator() {
                             <h3>{item.title}</h3>
                             <img src={item.img} alt="" />
                             <h4>Price: € {item.price}</h4>
+                            <a className="bg-dark text-white py-1 px-2 rounded mt-3" href={item.url} target='_blank'>Product Details</a>
                           </div>
                         ) :
                           (
@@ -732,7 +733,12 @@ export default function Configurator() {
                                   <Row gutter={[16, 16]}>
                                     {selections.map((item) => (
                                       <Col span={12}>
-                                        <div className="selection-beats">
+                                        <div className="selection-beats position-relative">
+                                          <div 
+                                          className="rounded-circle bg-secondary text-white px-2 position-absolute top-0 end-0"
+                                          >
+                                            {item.quantity}
+                                          </div>
                                           <img src={item.img} alt="" />
                                         </div>
                                       </Col>
