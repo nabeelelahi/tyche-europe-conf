@@ -63,7 +63,7 @@
 
     .react-3d-carousel{
       width: 100vw;
-      position: absolute;
+      position: absolute !important;
       left: 0px;
     }
     .react-3d-carousel .slider-container .slider-content .slider-single .slider-single-content{

@@ -445,343 +445,341 @@ export default function Configurator() {
 
   }
 
-
-  return (
-    <DragDropContext onDragEnd={dragEnd}>
-      <Nav />
-      <Row className="conf-row">
-        <Col lg={17} md={16} sm={24} xs={24}>
-          <div className="left-container">
-            <Row>
-              <Col lg={1} xs={2}>
-                <div className="left-icon-container h-100 py-3">
-                  {/* <img alt="" src={Heart} /> */}
-                  <ZoomInOutlined
-                    style={{ fontSize: "30px", color: "#949494" }}
-                    onClick={() => setVisible(true)}
-                  />
-                  <DeleteOutlined
-                    style={{ fontSize: "30px", color: "#949494" }}
-                    onClick={clearSelection}
-                  />
-                  {/* <img alt="" src={Color} /> */}
-                </div>
-              </Col>
-              <Col
-                lg={{ offset: 1, span: 22 }}
-                xs={{ offset: 1, span: 21 }}
-              >
-                <div className="bracelet-container">
-                  <div className="bracelet">
-                    {bracelet && (
-                      <>
-                        {bracelet?.map((item, index) => (
-                          <div className="bracelet-leaf-body">
-                            <DroppableComp droppableId={`${index}`}>
-                              <DraggableComp
-                                index={index}
-                                draggableId={`bracelet-draggable-${index}`}
-                              >
-                                {item ? (
-                                  <img
-                                    className="leaf"
-                                    src={item?.img}
-                                    alt=""
-                                  />
-                                ) : (
-                                  <img
-                                    className="leaf"
-                                    src="https://cdn.shopify.com/s/files/1/0620/5358/1019/products/DSC_5293-1_9a0bc38c-836c-48f9-a6d9-c00a2211b0d9.png?v=1640993777"
-                                    alt=""
-                                  />
-                                )}
-                              </DraggableComp>
-                            </DroppableComp>
+  if(overlay){
+    return(
+      <Overlay
+          visible={overlay}
+          setVisible={setOverlay}
+        />
+    )
+  }
+  else{
+    return (
+      <DragDropContext onDragEnd={dragEnd}>
+        <Nav setOverlay={setOverlay} />
+        <Row className="conf-row">
+          <Col lg={17} md={16} sm={24} xs={24}>
+            <div className="left-container">
+              <Row>
+                <Col lg={1} xs={2}>
+                  <div className="left-icon-container h-100 ps-2 py-3">
+                    <ZoomInOutlined
+                      style={{ fontSize: "30px", color: "#949494" }}
+                      onClick={() => setVisible(true)}
+                    />
+                    <DeleteOutlined
+                      style={{ fontSize: "30px", color: "#949494" }}
+                      onClick={clearSelection}
+                    />
+                  </div>
+                </Col>
+                <Col
+                  lg={{ offset: 1, span: 22 }}
+                  xs={{ offset: 1, span: 21 }}
+                >
+                  <div className="bracelet-container">
+                    <div className="bracelet">
+                      {bracelet && (
+                        <>
+                          {bracelet?.map((item, index) => (
+                            <div className="bracelet-leaf-body">
+                              <DroppableComp droppableId={`${index}`}>
+                                <DraggableComp
+                                  index={index}
+                                  draggableId={`bracelet-draggable-${index}`}
+                                >
+                                  {item ? (
+                                    <img
+                                      className="leaf"
+                                      src={item?.img}
+                                      alt=""
+                                    />
+                                  ) : (
+                                    <img
+                                      className="leaf"
+                                      src="https://cdn.shopify.com/s/files/1/0620/5358/1019/products/DSC_5293-1_9a0bc38c-836c-48f9-a6d9-c00a2211b0d9.png?v=1640993777"
+                                      alt=""
+                                    />
+                                  )}
+                                </DraggableComp>
+                              </DroppableComp>
+                            </div>
+                          ))}
+                        </>
+                      )}
+                    </div>
+                  </div>
+                </Col>
+                <Col
+                  className="left-top"
+                  span={24}
+                >
+                  <div className="categories-container">
+                    <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} className="categories-row">
+                      {categories.map((item, index) => (
+                        <Col key={item.title} span={6}>
+                          <div
+                            onClick={() => onCategorieChange(item, index)}
+                            style={{
+                              border:
+                                categoryIndex === index && "2px solid #dddddd",
+                            }}
+                            className="categories-card"
+                          >
+                            <img alt="" src={item.img} />
+                            {item.name}
                           </div>
-                        ))}
+                        </Col>
+                      ))}
+                    </Row>
+                  </div>
+                </Col>
+              </Row>
+              <DroppableComp droppableId="beats">
+                <Row gutter={[16, 16]} className="beats-container">
+                  {leaves ? (
+                    <>
+                      {leaves?.map((item, index) => {
+                        return (
+                          <Col key={item.title} lg={3} md={3} sm={4} xs={6}>
+                            <DraggableComp
+                              draggableId={item.title}
+                              index={index}
+                            >
+                              <div
+                                className="beats-cards"
+                                onClick={() => {
+                                  setItem(item);
+                                  setIsAddToCart(false);
+                                }}
+                              >
+                                <img src={item.img} alt="" />
+                              </div>
+                            </DraggableComp>
+                          </Col>
+                        );
+                      })}
+                    </>
+                  ) : (
+                    <LoaderComp />
+                  )}
+                </Row>
+              </DroppableComp>
+            </div>
+          </Col>
+          <Col
+            lg={{ offset: 0, span: 7 }}
+            md={{ offset: 0, span: 8 }}
+            sm={{ offset: 5, span: 14 }}
+            xs={{ offset: 0, span: 24 }}
+          >
+            <div className="right-container">
+              <div className="right-card">
+                <div
+                  onClick={() => setIsAddToCart(!isAddToCart)}
+                  className="top-button-box"
+                >
+                  <Row>
+                    {isAddToCart ? (
+                      <Col span={24}>
+                        <div
+                          style={{
+                            backgroundColor: "black",
+                            color: "white",
+                            paddingTop: "7.5px",
+                            borderTopLeftRadius: "75px",
+                          }}
+                          className="top-button-right"
+                        >
+                          <p> YOUR SELECTION </p>
+                        </div>
+                      </Col>
+                    ) : (
+                      <>
+                        <Col span={12}>
+                          <div
+                            style={{ backgroundColor: "#000", color: "#fff" }}
+                            className="top-button-left"
+                          >
+                            €{braceletPrice}
+                          </div>
+                        </Col>
+                        <Col
+                          onClick={() => {
+                            setIsAddToCart(true);
+                            setItem(null);
+                          }}
+                          span={12}
+                        >
+                          <div className="top-button-right top-button-right-small">
+                            Add to Cart
+                          </div>
+                        </Col>
                       </>
                     )}
-                  </div>
-                </div>
-              </Col>
-              <Col
-                className="left-top"
-                span={24}
-              >
-                <div className="categories-container">
-                  <Row gutter={{ xs: 4, sm: 8, md: 12, lg: 16 }} className="categories-row">
-                    {categories.map((item, index) => (
-                      <Col key={item.title} span={6}>
-                        <div
-                          onClick={() => onCategorieChange(item, index)}
-                          style={{
-                            border:
-                              categoryIndex === index && "2px solid #dddddd",
-                          }}
-                          className="categories-card"
-                        >
-                          <img alt="" src={item.img} />
-                          {item.name}
-                        </div>
-                      </Col>
-                    ))}
                   </Row>
                 </div>
-              </Col>
-            </Row>
-            <DroppableComp droppableId="beats">
-              <Row gutter={[16, 16]} className="beats-container">
-                {leaves ? (
-                  <>
-                    {leaves?.map((item, index) => {
-                      return (
-                        <Col key={item.title} lg={3} md={3} sm={4} xs={6}>
-                          <DraggableComp
-                            draggableId={item.title}
-                            index={index}
-                          >
-                            <div
-                              className="beats-cards"
-                              onClick={() => {
-                                setItem(item);
-                                setIsAddToCart(false);
-                              }}
-                            >
-                              <img src={item.img} alt="" />
-                            </div>
-                          </DraggableComp>
-                        </Col>
-                      );
-                    })}
-                  </>
-                ) : (
-                  <LoaderComp />
-                )}
-              </Row>
-            </DroppableComp>
-          </div>
-        </Col>
-        <Col
-          lg={{ offset: 0, span: 7 }}
-          md={{ offset: 0, span: 8 }}
-          sm={{ offset: 5, span: 14 }}
-          xs={{ offset: 0, span: 24 }}
-        >
-          <div className="right-container">
-            <div className="right-card">
-              <div
-                onClick={() => setIsAddToCart(!isAddToCart)}
-                className="top-button-box"
-              >
-                <Row>
-                  {isAddToCart ? (
-                    <Col span={24}>
-                      <div
-                        style={{
-                          backgroundColor: "black",
-                          color: "white",
-                          paddingTop: "7.5px",
-                          borderTopLeftRadius: "75px",
-                        }}
-                        className="top-button-right"
-                      >
-                        <p> YOUR SELECTION </p>
-                      </div>
-                    </Col>
-                  ) : (
-                    <>
-                      <Col span={12}>
-                        <div
-                          style={{ backgroundColor: "#000", color: "#fff" }}
-                          className="top-button-left"
-                        >
-                          €{braceletPrice}
-                        </div>
-                      </Col>
-                      <Col
+                <div className="item-top">
+                  <div>
+                    {!item && isAddToCart ? (
+                      <>
+                        <img src={Links} alt="" />
+                        <UpOutlined
+                          onClick={() => setIsAddToCart(false)}
+                          style={{
+                            fontSize: "25px",
+                            color: "#b5b3b3",
+                            margin: "1.5vh 1.5vw",
+                          }}
+                        />
+                      </>
+                    ) : !item && !isAddToCart ? (
+                      <DownOutlined
                         onClick={() => {
                           setIsAddToCart(true);
                           setItem(null);
                         }}
-                        span={12}
-                      >
-                        <div className="top-button-right top-button-right-small">
-                          Add to Cart
-                        </div>
-                      </Col>
-                    </>
-                  )}
-                </Row>
-              </div>
-              <div className="item-top">
-                <div>
-                  {!item && isAddToCart ? (
-                    <>
-                      <img src={Links} alt="" />
-                      <UpOutlined
-                        onClick={() => setIsAddToCart(false)}
                         style={{
                           fontSize: "25px",
                           color: "#b5b3b3",
                           margin: "1.5vh 1.5vw",
+                          marginLeft: '90%'
                         }}
                       />
-                    </>
-                  ) : !item && !isAddToCart ? (
-                    <DownOutlined
-                      onClick={() => {
-                        setIsAddToCart(true);
-                        setItem(null);
-                      }}
-                      style={{
-                        fontSize: "25px",
-                        color: "#b5b3b3",
-                        margin: "1.5vh 1.5vw",
-                        marginLeft: '90%'
-                      }}
-                    />
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              </div>
-              {
-                isLoading && !selections?.length ?
-                  <LoaderComp />
-                  :
-                  <>
-                    {isAddToCart ? (
-                      <>
-                        <div className="add-to-cart-container">
-                          <div className="add-to-cart-text-box">
-                            <div className="add-to-cart-text-row">
-                              <div className="size">
-                                {size} Leaves
-                              </div>
-                              <button
-                                disabled={size > 14 ? false : true}
-                                style={{ opacity: size > 14 ? "1" : "0.2" }}
-                                className="btns"
-                                onClick={() => addSub("sub")}
-                              >
-                                -
-                              </button>
-                              <button
-                                disabled={size < 19 ? false : true}
-                                style={{ opacity: size < 19 ? "1" : "0.2" }}
-                                className="btns"
-                                onClick={() => addSub("add")}
-                              >
-                                +
-                              </button>
-                            </div>
-                            <p className="bracelet-length"> Bracelet length: {`${size + 2} cm`}</p>
-                          </div>
-                          <hr />
-                          <div
-                            className="add-to-cart-scroll-area"
-                            style={{ paddingTop: addToCartMargin }}
-                          >
-                            {selections.map((item) => (
-                              <div key={item.title} className="image-text-row">
-                                <div>
-                                  <img src={item.img} alt="" />
-                                  <p>{item.title}</p>
-                                </div>
-                                <p>€ {item.price} x <span className="text-primary fw-bold">{item.quantity}</span> </p>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                        <div
-                          className="bottom-buttons"
-                          onClick={proceedToCheckout}
-                        >
-                          <p>€{braceletPrice}</p>
-                          <p className="fw-bold">Add to cart</p>
-                        </div>
-                      </>
                     ) : (
-                      <div className="right-text-box">
-                        {item ? (
-                          <div className="item-details">
-                            <div className="item-top">
-                              <CloseOutlined
-                                style={{ fontSize: "25px", color: "#b5b3b3" }}
-                                onClick={() => setItem(null)}
-                              />
-                            </div>
-                            <h3>{item.title}</h3>
-                            <img src={item.img} alt="" />
-                            <h4>Price: € {item.price}</h4>
-                            <a className="bg-dark text-white py-1 px-2 rounded mt-3" href={item.url} target='_blank'>Product Details</a>
-                          </div>
-                        ) :
-                          (
-                            <>
-                              {
-                                !selections?.length ?
-                                  <h4 className="mb-5">
-                                    The base product price contains <b className="text-primary">{size}</b> leaves
-                                  </h4>
-                                  :
-                                  <></>
-                              }
-                              <h2>YOUR SELECTION</h2>
-                              {selections.length ? (
-                                <div className="selection-flow">
-                                  <Row gutter={[16, 16]}>
-                                    {selections.map((item) => (
-                                      <Col span={12}>
-                                        <div className="selection-beats position-relative">
-                                          <div 
-                                          className="rounded-circle bg-secondary text-white px-2 position-absolute top-0 end-0"
-                                          >
-                                            {item.quantity}
-                                          </div>
-                                          <img src={item.img} alt="" />
-                                        </div>
-                                      </Col>
-                                    ))}
-                                  </Row>
-                                </div>
-                              ) : (
-                                <>
-                                  <p>You haven't selected any</p>
-                                  <p>
-                                    Click on the arrow above to cange the length of you
-                                    bracelet.
-                                  </p>
-                                  <span>
-                                    Every time you will add a Link to your bracelet, it
-                                    will automatically be saved here in Your Selection.
-                                  </span>
-                                  <a
-                                    href="#"
-                                    className="text-dark mt-3"
-                                    onClick={() => setOverlay(true)}
-                                  ><u>Help with sizing?</u></a>
-                                </>
-                              )}
-                            </>
-                          )}
-                      </div>
+                      <></>
                     )}
-                  </>
-              }
+                  </div>
+                </div>
+                {
+                  isLoading && !selections?.length ?
+                    <LoaderComp />
+                    :
+                    <>
+                      {isAddToCart ? (
+                        <>
+                          <div className="add-to-cart-container">
+                            <div className="add-to-cart-text-box">
+                              <div className="add-to-cart-text-row">
+                                <div className="size">
+                                  {size} Leaves
+                                </div>
+                                <button
+                                  disabled={size > 14 ? false : true}
+                                  style={{ opacity: size > 14 ? "1" : "0.2" }}
+                                  className="btns"
+                                  onClick={() => addSub("sub")}
+                                >
+                                  -
+                                </button>
+                                <button
+                                  disabled={size < 19 ? false : true}
+                                  style={{ opacity: size < 19 ? "1" : "0.2" }}
+                                  className="btns"
+                                  onClick={() => addSub("add")}
+                                >
+                                  +
+                                </button>
+                              </div>
+                              <p className="bracelet-length"> Bracelet length: {`${size + 2} cm`}</p>
+                            </div>
+                            <hr />
+                            <div
+                              className="add-to-cart-scroll-area"
+                              style={{ paddingTop: addToCartMargin }}
+                            >
+                              {selections.map((item) => (
+                                <div key={item.title} className="image-text-row">
+                                  <div>
+                                    <img src={item.img} alt="" />
+                                    <p>{item.title}</p>
+                                  </div>
+                                  <p>€ {item.price} x <span className="text-primary fw-bold">{item.quantity}</span> </p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                          <div
+                            className="bottom-buttons"
+                            onClick={proceedToCheckout}
+                          >
+                            <p>€{braceletPrice}</p>
+                            <p className="fw-bold">Add to cart</p>
+                          </div>
+                        </>
+                      ) : (
+                        <div className="right-text-box">
+                          {item ? (
+                            <div className="item-details">
+                              <div className="item-top">
+                                <CloseOutlined
+                                  style={{ fontSize: "25px", color: "#b5b3b3" }}
+                                  onClick={() => setItem(null)}
+                                />
+                              </div>
+                              <h3>{item.title}</h3>
+                              <img src={item.img} alt="" />
+                              <h4>Price: € {item.price}</h4>
+                              <a className="bg-dark text-white py-1 px-2 rounded mt-3" href={item.url} target='_blank'>Product Details</a>
+                            </div>
+                          ) :
+                            (
+                              <>
+                                {
+                                  !selections?.length ?
+                                    <h4 className="mb-5 fw-normal text-secondary">
+                                      The base product price contains <b className="text-dark">{size}</b> leaves
+                                    </h4>
+                                    :
+                                    <></>
+                                }
+                                <h2>YOUR SELECTION</h2>
+                                {selections.length ? (
+                                  <div className="selection-flow">
+                                    <Row gutter={[16, 16]}>
+                                      {selections.map((item) => (
+                                        <Col span={12}>
+                                          <div className="selection-beats position-relative">
+                                            <div 
+                                            className="rounded-circle bg-secondary text-white px-2 position-absolute top-0 end-0"
+                                            >
+                                              {item.quantity}
+                                            </div>
+                                            <img src={item.img} alt="" />
+                                          </div>
+                                        </Col>
+                                      ))}
+                                    </Row>
+                                  </div>
+                                ) : (
+                                  <>
+                                    <p>You haven't selected any</p>
+                                    <p>
+                                      Click on the arrow above to cange the length of you
+                                      bracelet.
+                                    </p>
+                                    <span>
+                                      Every time you will add a Link to your bracelet, it
+                                      will automatically be saved here in Your Selection.
+                                    </span>
+                                  </>
+                                )}
+                              </>
+                            )}
+                        </div>
+                      )}
+                    </>
+                }
+              </div>
             </div>
-          </div>
-        </Col>
-      </Row>
-      <BraceletModal
-        visible={visible}
-        setVisible={setVisible}
-        bracelet={bracelet}
-      />
-      <Overlay
-        visible={overlay}
-        setVisible={setOverlay}
-      />
-    </DragDropContext>
-  );
+          </Col>
+        </Row>
+        <BraceletModal
+          visible={visible}
+          setVisible={setVisible}
+          bracelet={bracelet}
+        />
+      </DragDropContext>
+    );
+  }
 }
