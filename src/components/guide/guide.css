@@ -1,0 +1,11 @@
+.guide{
+    min-height: 120vh;
+    padding: 12vh;
+    overflow: hidden;
+    min-width: 100vw;
+    background-color: hsla(0, 0%, 0%, 0.9);
+    position: absolute;
+    top: 0;
+    left: 0%;
+    z-index: 1001;
+}

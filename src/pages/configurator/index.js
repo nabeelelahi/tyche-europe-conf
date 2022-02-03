@@ -15,7 +15,8 @@ import {
   DraggableComp,
   LoaderComp,
   Nav,
-  Overlay
+  Overlay,
+  Guide
 } from "../../components";
 import { categories } from "../../config";
 import Client from 'shopify-buy';
@@ -76,6 +77,8 @@ export default function Configurator() {
 
   const [single, setSingle] = useState(null);
 
+  const [guide, setGuide] = useState(false);
+
   const addToCartMargin =
     selections.length === 23
       ? "340px"
@@ -110,6 +113,11 @@ export default function Configurator() {
                                   : selections.length === 8
                                     ? "100px"
                                     : selections.length === 7 && "75px";
+  useEffect(() => {
+    const tempGuide = localStorage.getItem('guide')
+    tempGuide ? setGuide(tempGuide) : setGuide(false)
+  }, [])
+
 
   useEffect(() => {
     selectionAndPrize();
@@ -287,16 +295,35 @@ export default function Configurator() {
       tempArray.length = size + 1;
       tempArray[tempArray?.length - 1] = null;
       setBraceletPrice(prev => prev + 10)
-    } else if (op === "sub" && tempArray) {
-      tempArray.length = size - 1;
-      setBraceletPrice(prev => prev - 10)
+      setBracelet(null);
+      setTimeout(() => {
+        setBracelet(tempArray);
+      }, 0.5);
+    }
+    else if (op === "sub" && tempArray) {
+      if (tempArray[tempArray.length - 1]) {
+        console.log('malik kuch to hai')
+        removeLineItemInCart(tempArray[tempArray.length - 1])
+          .then(() => {
+            tempArray.length = size - 1;
+            setBraceletPrice(prev => prev - 10)
+            setBracelet(null);
+            setTimeout(() => {
+              setBracelet(tempArray);
+            }, 0.5);
+          })
+      }
+      else {
+        console.log('malik kuch bhi nhi hai')
+        tempArray.length = size - 1;
+        setBraceletPrice(prev => prev - 10)
+        setBracelet(null);
+        setTimeout(() => {
+          setBracelet(tempArray);
+        }, 0.5);
+      }
     }
 
-    setBracelet(null);
-
-    setTimeout(() => {
-      setBracelet(tempArray);
-    }, 0.5);
   }
 
   function addSub(op) {
@@ -375,8 +402,6 @@ export default function Configurator() {
 
     if (removingLeave.quantity > 1) {
 
-      console.log('update huwa')
-
       const lineItemsToUpdate = [{ id: removingLeave.id, quantity: parseInt(removingLeave.quantity - 1, 10) }]
 
       const res = await client.checkout.updateLineItems(checkoutId, lineItemsToUpdate)
@@ -387,7 +412,6 @@ export default function Configurator() {
     else {
 
       const res = await client.checkout.removeLineItems(checkoutId, [removingLeave.id])
-      console.log(res, 'remove huwa')
       setCheckout(res)
 
     }
@@ -445,18 +469,21 @@ export default function Configurator() {
 
   }
 
-  if(overlay){
-    return(
+  if (overlay) {
+    return (
       <Overlay
-          visible={overlay}
-          setVisible={setOverlay}
-        />
+        visible={overlay}
+        setVisible={setOverlay}
+      />
     )
   }
-  else{
+  else {
     return (
       <DragDropContext onDragEnd={dragEnd}>
-        <Nav setOverlay={setOverlay} />
+        {
+          !guide && <Guide setGuide={setGuide} />
+        }
+        <Nav setOverlay={setOverlay} braceletPrice={braceletPrice} />
         <Row className="conf-row">
           <Col lg={17} md={16} sm={24} xs={24}>
             <div className="left-container">
@@ -691,10 +718,12 @@ export default function Configurator() {
                               {selections.map((item) => (
                                 <div key={item.title} className="image-text-row">
                                   <div>
-                                    <img src={item.img} alt="" />
+                                    <div className="img">
+                                      <img src={item.img} alt="" />
+                                    </div>
                                     <p>{item.title}</p>
                                   </div>
-                                  <p>€ {item.price} x <span className="text-primary fw-bold">{item.quantity}</span> </p>
+                                  <p>€ {item.price} x <span className="text-dark fw-bold">{item.quantity}</span> </p>
                                 </div>
                               ))}
                             </div>
@@ -740,8 +769,8 @@ export default function Configurator() {
                                       {selections.map((item) => (
                                         <Col span={12}>
                                           <div className="selection-beats position-relative">
-                                            <div 
-                                            className="rounded-circle bg-secondary text-white px-2 position-absolute top-0 end-0"
+                                            <div
+                                              className="rounded-circle bg-secondary text-white px-2 position-absolute top-0 end-0"
                                             >
                                               {item.quantity}
                                             </div>

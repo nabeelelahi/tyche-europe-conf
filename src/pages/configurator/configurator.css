@@ -26,6 +26,14 @@ body {
   width: 55%;
 }
 
+.size-text{
+  position: absolute;
+  left: 90%;
+  top: 3.5vh;
+  color: white;
+  font-weight: 700;
+}
+
 
 .conf-header img {
   height: 65%;
@@ -392,8 +400,14 @@ body {
   align-items: center;
 }
 
-.image-text-row div img {
-  width: 2vw;
+.image-text-row div .img {
+  width: 3vw;
+  overflow: hidden;
+}
+
+.image-text-row div .img img {
+  width: 100%;
+  transform: scale(1.5);
 }
 
 .image-text-row p {
@@ -535,6 +549,13 @@ font-size: 8px;
     justify-content: center;
     overflow: hidden;
     background-color: black;
+  }
+  .size-text{
+    position: absolute;
+    left: 80%;
+    top: 2.5vh;
+    color: white;
+    font-weight: 700;
   }
 
   .logo img{

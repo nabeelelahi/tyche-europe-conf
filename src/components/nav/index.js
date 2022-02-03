@@ -1,7 +1,7 @@
 import React from "react";
 import { Logo, Links } from "../../assets";
 
-export default function Nav({setOverlay}) {
+export default function Nav({setOverlay, braceletPrice}) {
     return (
         <nav className="conf-header navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
@@ -32,6 +32,7 @@ export default function Nav({setOverlay}) {
                     <a href="https://tyche-europe.com" target='_blank' >
                         <img alt="" src={Logo} />
                     </a>
+                    <p className="size-text header-link nav-link active mx-lg-1">  €{braceletPrice ? braceletPrice : ''}</p>
                 </div>
             </div>
         </nav>

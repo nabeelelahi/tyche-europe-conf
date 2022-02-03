@@ -16,6 +16,7 @@ import card2 from './images/card2.png'
 import card3 from './images/card3.png'
 import card4 from './images/card4.png'
 import maincard from './images/cusotmize.png'
+import gif from './images/gif.gif'
 
 export {
     Logo,
@@ -35,5 +36,6 @@ export {
     card2,
     card3,
     card4,
-    maincard
+    maincard,
+    gif
 }
