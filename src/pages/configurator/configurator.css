@@ -531,6 +531,16 @@ height: 10vh;
 font-size: 8px;
   }
 
+  .image-text-row div .img {
+    width: 10vw !important;
+    overflow: hidden;
+  }
+  
+  .image-text-row div .img img {
+    width: 100%;
+    transform: scale(1.5) !important;
+  }
+
   .conf-header {
     background-color: transparent !important;
   }
@@ -554,7 +564,7 @@ font-size: 8px;
   }
   .size-text{
     position: absolute;
-    left: 80%;
+    left: 72.5%;
     top: 2.5vh;
     color: white;
     font-weight: 700;
