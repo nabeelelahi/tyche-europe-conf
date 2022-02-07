@@ -1,7 +1,9 @@
 import React from "react";
 import { Logo, Links } from "../../assets";
+import { ShoppingCartOutlined } from '@ant-design/icons';
 
-export default function Nav({setOverlay, braceletPrice}) {
+
+export default function Nav({ setOverlay, braceletPrice }) {
     return (
         <nav className="conf-header navbar navbar-expand-lg navbar-dark bg-dark">
             <div className="container-fluid">
@@ -32,7 +34,15 @@ export default function Nav({setOverlay, braceletPrice}) {
                     <a href="https://tyche-europe.com" target='_blank' >
                         <img alt="" src={Logo} />
                     </a>
-                    <p className="size-text header-link nav-link active mx-lg-1">  €{braceletPrice ? braceletPrice : ''}</p>
+                    <p className="size-text header-link nav-link active mx-lg-1 d-flex align-items-center">
+                        {
+                            braceletPrice &&
+                            <>
+                                <ShoppingCartOutlined style={{ color: 'white' }} />
+                                <span className="mx-1">€{braceletPrice}</span>
+                                </>
+                        }
+                            </p>
                 </div>
             </div>
         </nav>
