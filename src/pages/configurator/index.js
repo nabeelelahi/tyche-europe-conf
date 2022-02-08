@@ -639,7 +639,7 @@ export default function Configurator() {
                           span={12}
                         >
                           <div className="top-button-right top-button-right-small">
-                            Add to Cart
+                          Warenkorb
                           </div>
                         </Col>
                       </>
@@ -733,7 +733,7 @@ export default function Configurator() {
                             onClick={proceedToCheckout}
                           >
                             <p>€{braceletPrice}</p>
-                            <p className="fw-bold">Add to cart</p>
+                            <p className="fw-bold">Warenkorb</p>
                           </div>
                         </>
                       ) : (
@@ -748,21 +748,21 @@ export default function Configurator() {
                               </div>
                               <h3>{item.title}</h3>
                               <img src={item.img} alt="" />
-                              <h4>Price: € {item.price}</h4>
-                              <a className="bg-dark text-white py-1 px-2 rounded mt-3" href={item.url} target='_blank'>Product Details</a>
+                              <h4>Preis: € {item.price}</h4>
+                              <a className="bg-dark text-white py-1 px-2 rounded mt-3" href={item.url} target='_blank'>Produkt Details</a>
                             </div>
                           ) :
                             (
                               <>
                                 {
                                   !selections?.length ?
-                                    <h4 className="mb-5 fw-normal text-secondary">
-                                      The base product price contains <b className="text-dark">{size}</b> leaves
+                                    <h4 className="mb-2 fw-normal text-secondary">
+                                      Dein Starter Armband enthält aktuell <b className="text-dark">{size}</b> LEAVES
                                     </h4>
                                     :
                                     <></>
                                 }
-                                <h2>YOUR SELECTION</h2>
+                                <h2>DESIGN DEIN ARMBAND </h2>
                                 {selections.length ? (
                                   <div className="selection-flow">
                                     <Row gutter={[16, 16]}>
@@ -782,14 +782,20 @@ export default function Configurator() {
                                   </div>
                                 ) : (
                                   <>
-                                    <p>You haven't selected any</p>
                                     <p>
-                                      Click on the arrow above to cange the length of you
-                                      bracelet.
+                                      Jedes Armband startet mit unseren BLANCO LEAVES, die du ganz einfach
+                                      von unten nach oben ziehen und tauschen kannst. Dabei werden die Preise automatisch
+                                      angepasst.
+                                    </p>
+                                    <p>
+                                      Kürze oder verlängere dein Armband durch klicken auf das Minus und Plus Symbol.
                                     </p>
                                     <span>
-                                      Every time you will add a Link to your bracelet, it
-                                      will automatically be saved here in Your Selection.
+                                      Deine Auswahl wird in diesem Fenster angezeigt sobald du ein neues LEAVE in dein Armband
+                                      ziehst.
+                                    </span>
+                                    <span>
+                                      Du benötigst Hilfe bei der Längenwahl? Klicke oben einfach auf „Größenhilfe“. .
                                     </span>
                                   </>
                                 )}

@@ -135,6 +135,13 @@ body {
   transition: 0.2s linear;
 }
 
+.right-text-box h4{
+font-size: 17px;
+}
+.right-text-box h2{
+font-size: 19px;
+}
+
 .right-text-box .selection-flow {
   max-height: 50vh;
   width: 100%;
@@ -144,11 +151,11 @@ body {
 
 .right-text-box p {
   font-weight: 600;
-  font-size: 13px;
+  font-size: 11px;
 }
 
 .right-text-box span {
-  font-size: 12px;
+  font-size: 9.5px;
 }
 
 .right-container {
@@ -460,7 +467,7 @@ body {
 
 .modal-bracelet {
   width: 100vw;
-  height: 100vh;
+  height: 100vh !important;
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap !important;

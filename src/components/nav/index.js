@@ -19,14 +19,14 @@ export default function Nav({ setOverlay, braceletPrice }) {
                             <a className="header-link nav-link active mx-lg-1" href="https://tyche-europe.com/collections" target='_blank'>Leaves</a>
                         </li>
                         <li className="nav-item">
-                            <a className="header-link nav-link active mx-lg-1" href="https://tyche-europe.com/pages/about-tyche" target='_blank'>About us</a>
+                            <a className="header-link nav-link active mx-lg-1" href="https://tyche-europe.com/pages/about-tyche" target='_blank'>über uns</a>
                         </li>
                         <li className="nav-item">
                             <a
                                 href="#"
                                 className="header-link nav-link active mx-lg-1"
                                 onClick={() => setOverlay(true)}
-                            >Help with sizing?</a>
+                            >Größenhilfe</a>
                         </li>
                     </ul>
                 </div>
@@ -38,7 +38,7 @@ export default function Nav({ setOverlay, braceletPrice }) {
                         {
                             braceletPrice &&
                             <>
-                                <ShoppingCartOutlined style={{ color: 'white' }} />
+                                {/* <ShoppingCartOutlined style={{ color: 'white' }} /> */}
                                 <span className="mx-1">€{braceletPrice}</span>
                                 </>
                         }

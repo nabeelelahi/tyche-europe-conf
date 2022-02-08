@@ -10,25 +10,25 @@ import {
   
   const categories = [
     {
-      name: "Letters",
+      name: "Buchstaben",
       img: Alphabet,
       state: "buchstabe",
       key: "2",
     },
     {
-      name: "Symbols",
+      name: "Symbole",
       img: Symbols,
       state: "symbol",
       key: "1",
     },
     {
-      name: "Zodiac",
+      name: "Sternzeichen",
       img: Zodiac,
       state: "sternzeichen",
       key: "4",
     },
     {
-      name: "Stones",
+      name: "Steine",
       img: Stone,
       state: "stein",
       key: "3",

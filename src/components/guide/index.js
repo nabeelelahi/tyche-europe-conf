@@ -15,7 +15,7 @@ export default function Guide({ setGuide }) {
             <img className='h-100 w-100' src={gif} alt='' />
             </div>
             <div className='col-12 col-lg-4 d-flex align-items-center'>
-                <h3 className='text-white text-center'>Create you custom bracelet by dragging leaf to the bracelet area.</h3>
+                <h3 className='text-white text-center'>DESIGN DIR DEIN ARMBAND</h3>
             </div>
         </div>
     )
