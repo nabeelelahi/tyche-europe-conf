@@ -272,10 +272,9 @@ font-size: 19px;
 
 .item-top img {
   width: 50%;
-  height: 5vh;
+  height: 10vh;
   margin-right: 10%;
   margin-left: 20%;
-  transform: rotate(4.25deg);
 }
 
 .add-to-cart-container {
