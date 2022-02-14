@@ -618,7 +618,7 @@ export default function Configurator() {
                           }}
                           className="top-button-right"
                         >
-                          <p> YOUR SELECTION </p>
+                          <p> DEINE AUSWAHL </p>
                         </div>
                       </Col>
                     ) : (
@@ -762,7 +762,7 @@ export default function Configurator() {
                                     :
                                     <></>
                                 }
-                                <h2>DESIGN DEIN ARMBAND </h2>
+                                <h2>DEINE AUSWAHL </h2>
                                 {selections.length ? (
                                   <div className="selection-flow">
                                     <Row gutter={[16, 16]}>

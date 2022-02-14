@@ -27,11 +27,11 @@ const Card = ({ title, img }) => {
 };
 
 let slides = [
-  <Card title={"Create your own bracelet"} img={maincard} />,
-  <Card title={"with Symbolic leafs"} img={card1} />,
-  <Card title={"with Zodiac leafs"} img={card2} />,
-  <Card title={"with Stones"} img={card3} />,
-  <Card title={"with Alphabetic leafs"} img={card4} />,
+  <Card title={"Design dein Armband"} img={maincard} />,
+  <Card title={"Design dein Armband"} img={card1} />,
+  <Card title={"Design dein Armband"} img={card2} />,
+  <Card title={"Design dein Armband"} img={card3} />,
+  <Card title={"Design dein Armband"} img={card4} />,
 ];
 
 function LandingPage() {
