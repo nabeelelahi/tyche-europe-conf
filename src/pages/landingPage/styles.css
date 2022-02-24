@@ -45,10 +45,10 @@
   }
 
   @media only screen and (max-width: 600px) {
-    .landing-body{
+    /* .landing-body{
       background-image: url('https://cdn.shopify.com/s/files/1/0509/4978/3709/files/Rectangle_28_994fffdc-195d-4cc6-98fc-7d51da76a8d0.png?v=1625143150') !important;
     filter: grayscale(50%);
-    }
+    } */
     .layer{
       padding-top: 27.5%;
     }

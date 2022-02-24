@@ -20,6 +20,7 @@ import {
 } from "../../components";
 import { categories } from "../../config";
 import Client from 'shopify-buy';
+import { decode } from 'shopify-gid'
 import './configurator.css'
 
 const client = Client.buildClient({
@@ -391,6 +392,37 @@ export default function Configurator() {
 
   }
 
+  async function addTOCart() {
+    let x = [];
+    bracelet.forEach((item, index) => {
+      if (!item) {
+        x.push(null)
+      }
+    })
+
+    addVariantToCart(single.variants[0].id, x.length)
+      .then(() => {
+        client.checkout.fetch(checkoutId).then((checkout) => {
+          if (checkout.lineItems) {
+            let tempArray = checkout?.lineItems.map((item) => {
+              item.decodedId = decode(item.variant.id).id
+              return item
+            })
+
+            let str = String(tempArray.map((tempItem) => `updates[${tempItem.decodedId}]=${tempItem.quantity}`));
+
+            str = str.replace(/,/g, "&")
+
+            const URL = `https://tyche-europe.com/cart/update?${str}`
+
+            window.location.href = URL
+
+          }
+        })
+      })
+
+  }
+
   async function removeLineItemInCart(lineItem) {
 
     let removingLeave;
@@ -616,9 +648,9 @@ export default function Configurator() {
                             paddingTop: "7.5px",
                             borderTopLeftRadius: "75px",
                           }}
-                          className="top-button-right"
+                          className="top-button-right d-flex"
                         >
-                          <p> DEINE AUSWAHL </p>
+                          <p className="fs-5"> DEINE AUSWAHL <span className="fw-bold">€{braceletPrice}</span>  </p>
                         </div>
                       </Col>
                     ) : (
@@ -639,7 +671,7 @@ export default function Configurator() {
                           span={12}
                         >
                           <div className="top-button-right top-button-right-small">
-                          Warenkorb
+                            Warenkorb
                           </div>
                         </Col>
                       </>
@@ -708,7 +740,7 @@ export default function Configurator() {
                                   +
                                 </button>
                               </div>
-                              <p className="bracelet-length"> Bracelet length: {`${size + 2} cm`}</p>
+                              <p className="bracelet-length"> Armband Länge: ca. {`${size + 2} cm`}</p>
                             </div>
                             <hr />
                             <div
@@ -717,23 +749,30 @@ export default function Configurator() {
                             >
                               {selections.map((item) => (
                                 <div key={item.title} className="image-text-row">
-                                  <div>
+                                  <div style={{maxWidth:"65%"}}>
                                     <div className="img">
                                       <img src={item.img} alt="" />
                                     </div>
-                                    <p>{item.title}</p>
+                                    <p className="price-text">{item.title}</p>
                                   </div>
-                                  <p>€ {item.price} x <span className="text-dark fw-bold">{item.quantity}</span> </p>
+                                  <p className="price-box">€ {item.price} x <span className="text-dark fw-bold">{item.quantity}</span> </p>
                                 </div>
                               ))}
                             </div>
                           </div>
-                          <div
-                            className="bottom-buttons"
-                            onClick={proceedToCheckout}
-                          >
-                            <p>€{braceletPrice}</p>
-                            <p className="fw-bold">Warenkorb</p>
+                          <div className="d-flex">
+                            <div
+                              className="bottom-buttons button-1 w-50 border border-white"
+                              onClick={addTOCart}
+                            >
+                              <p className="fs-6">In den Warenkorb</p>
+                            </div>
+                            <div
+                              className="bottom-buttons button-2 w-50 border border-white"
+                              onClick={proceedToCheckout}
+                            >
+                              <p className="fs-6">Jetzt Kaufen</p>
+                            </div>
                           </div>
                         </>
                       ) : (

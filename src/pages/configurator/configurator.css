@@ -176,14 +176,14 @@ font-size: 19px;
 }
 
 .right-card .top-button-box {
-  border-radius: 75px;
+  border-radius: 50px;
 }
 
 .right-card .top-button-box .top-button-left {
   height: 8vh;
   font-size: 20px;
   font-weight: 600;
-  border-top-left-radius: 75px;
+  border-top-left-radius: 50px;
   text-align: center;
   display: flex;
   padding: 0px 25%;
@@ -305,7 +305,8 @@ font-size: 19px;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
-  overflow-y: auto;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
 }
 
 .add-to-cart-container .add-to-cart-text-row {
@@ -397,10 +398,10 @@ font-size: 19px;
 }
 
 .image-text-row {
-  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  width: 90%;
 }
 
 .image-text-row div {
@@ -420,18 +421,29 @@ font-size: 19px;
 
 .image-text-row p {
   color: #a8a6a6;
-  margin: 0.5vh;
+  margin: 0.5vh 0;
+}
+
+.price-box{
+  min-width: 90px !important;
+  text-align: right !important;
 }
 
 .bottom-buttons {
   background-color: black;
   height: 10%;
   width: 100;
-  border-radius: 0px 0px 75px 75px;
   display: flex;
   justify-content: space-evenly;
   align-items: center;
   cursor: pointer;
+}
+
+.button-1{
+  border-radius: 0px 0px 0px 50px;
+}
+.button-2{
+  border-radius: 0px 0px 50px 0px;
 }
 
 .bottom-buttons p {
@@ -503,6 +515,14 @@ font-size: 19px;
   margin-left: auto;
   margin-right: auto;
   transform: scale(1.2);
+}
+
+.price-text{
+  display: inline-block !important;
+  width: 100% !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
 }
 
 /* width */
